@@ -1,0 +1,5 @@
+c:\users\joao ferreira\documents\visual studio 2015\Projects\DADSTORM\Operator\bin\Debug\Operator.exe.config
+c:\users\joao ferreira\documents\visual studio 2015\Projects\DADSTORM\Operator\bin\Debug\Operator.exe
+c:\users\joao ferreira\documents\visual studio 2015\Projects\DADSTORM\Operator\bin\Debug\Operator.pdb
+c:\users\joao ferreira\documents\visual studio 2015\Projects\DADSTORM\Operator\obj\Debug\Operator.exe
+c:\users\joao ferreira\documents\visual studio 2015\Projects\DADSTORM\Operator\obj\Debug\Operator.pdb
