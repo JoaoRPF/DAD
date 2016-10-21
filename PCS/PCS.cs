@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
+using System.Threading;
+using System.IO;
+using System.Diagnostics;
 
 namespace DADSTORM
 {
@@ -26,8 +29,40 @@ namespace DADSTORM
     {
         public string printHello()
         {
-            System.Console.WriteLine("Hello world");
-            return "HELLO Puppet Master";
+            System.Console.WriteLine("Sou o pcs");
+            return "Sou o PuppetMaster";
+        }
+
+        public string changeInfo(string info)
+        {
+            string operatorPath = BuildPaths.getExecPath("\\Operator\\bin\\Debug\\Operator.exe");
+            string operatorArgs = info;
+            ProcessStartInfo operatorStartInfo = new ProcessStartInfo();
+            operatorStartInfo.FileName = operatorPath;
+            operatorStartInfo.Arguments = operatorArgs;
+            Process operatorProcess = Process.Start(operatorStartInfo);
+            System.Console.WriteLine("Comecei processo com info: " + info);
+            return "PCS recebeu: " + info;
+        }
+    }
+
+    public static class BuildPaths
+    {
+        public static string processPath;
+
+        public static string getPath()
+        {
+            string currentPath = Directory.GetCurrentDirectory();
+            string beforePath = Directory.GetParent(currentPath).ToString();
+            string beforePath2 = Directory.GetParent(beforePath).ToString();
+            processPath = Directory.GetParent(beforePath2).ToString();
+            return processPath;
+        }
+
+        public static string getExecPath(string execPath)
+        {
+            processPath = getPath() + execPath;
+            return processPath;
         }
     }
 }

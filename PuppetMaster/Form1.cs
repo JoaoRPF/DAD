@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 using DADSTORM;
 
@@ -22,8 +23,28 @@ namespace DADSTORM
 
         private void execFileClick(object sender, EventArgs e)
         {
-            string result = PuppetMaster.services.printHello();
-            logText.Text = result;
+            /*string result = PuppetMaster.services.printHello();
+            logText.Text += "\r\n" + result;
+            sendStuffToPCS();*/
+            PuppetMaster.startReadingConfigFile(fileText.Text);
+        }
+
+        private void sendStuffToPCS()
+        {
+            string result = PuppetMaster.services.changeInfo("Hello");
+            logText.Text += "\r\n" + result;
+        }
+
+        public void addNewLineToLog(string line)
+        {
+            this.BeginInvoke((Action) (() => {
+                logText.Text += "\r\n" + line;
+            }));
+        }
+
+        public string getFileText()
+        {
+            return fileText.Text;
         }
     }
 }
