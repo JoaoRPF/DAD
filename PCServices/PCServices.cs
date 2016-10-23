@@ -11,6 +11,8 @@ namespace DADSTORM
     {
         string printHello();
         string changeInfo(string msg);
+        string sendOperatorInfoToPCS(Dictionary<string, string> _operator);
+        string startOperator(string operatorID);
     }
 
     public interface PuppetMasterServices

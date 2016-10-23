@@ -22,6 +22,7 @@ namespace DADSTORM
         public static PCServices services;
         public static Form1 formPuppetMaster = new Form1();
         public static TcpChannel channel = new TcpChannel(10000);
+        private static Dictionary<string, string> operatorsAddresses = new Dictionary<string, string>(); //addresses by id TODOOOOO
 
         [STAThread]
         static void Main()
@@ -59,7 +60,8 @@ namespace DADSTORM
                 string[] line = lines[i].Split();
                 if (!String.IsNullOrEmpty(line[0]))
                 {
-                    Debug.WriteLine("line 0 = " + line[0]);
+                    int cont = i + 1;
+                    Debug.WriteLine("line "  + cont + "=" + line[0]);
                     Dictionary<string, string> lineContentDictionary = readConfig.readLine(line);
                     string lineID = lineContentDictionary["LINE_ID"];
                     Debug.WriteLine("lineID = " + lineID);
@@ -69,9 +71,19 @@ namespace DADSTORM
                         foreach (string key in lineContentDictionary.Keys)
                         {
                             string value = lineContentDictionary[key];
-                            Debug.WriteLine("OLA");
                             PuppetMaster.formPuppetMaster.addNewLineToLog(key + " = " + value);
                         }
+                        PuppetMaster.formPuppetMaster.addNewLineToLog("\r\n");
+                        services.sendOperatorInfoToPCS(lineContentDictionary);
+                    }
+
+                    else if (lineID.Equals("START"))
+                    {
+                        string operatorID = lineContentDictionary["OPERATOR_ID"];
+                        PuppetMaster.formPuppetMaster.addNewLineToLog("PCS is about to start: " + operatorID);
+                        string result = services.startOperator(operatorID);
+                        PuppetMaster.formPuppetMaster.addNewLineToLog("Msg from PCS: " + result);
+
                     }
                 }
             }
@@ -80,10 +92,10 @@ namespace DADSTORM
 
     class PuppetMasterServicesClass: MarshalByRefObject, PuppetMasterServices
     {
-        public string operatorConnected (String name)
+        public string operatorConnected (String msgFromOperator)
         {       
-            PuppetMaster.formPuppetMaster.addNewLineToLog(name);
-            return name;
+            PuppetMaster.formPuppetMaster.addNewLineToLog("Msg from Operator: " + msgFromOperator);
+            return msgFromOperator;
         }
     }
 }

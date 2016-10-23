@@ -6,3 +6,5 @@ c:\users\joao ferreira\documents\visual studio 2015\Projects\DADSTORM\PCS\obj\De
 c:\users\joao ferreira\documents\visual studio 2015\Projects\DADSTORM\PCS\obj\Debug\PCS.csprojResolveAssemblyReference.cache
 c:\users\joao ferreira\documents\visual studio 2015\Projects\DADSTORM\PCS\bin\Debug\PCServices.dll
 c:\users\joao ferreira\documents\visual studio 2015\Projects\DADSTORM\PCS\bin\Debug\PCServices.pdb
+C:\Users\Joao Ferreira\Documents\Visual Studio 2015\Projects\DADSTORM\PCS\bin\Debug\Operator.exe
+C:\Users\Joao Ferreira\Documents\Visual Studio 2015\Projects\DADSTORM\PCS\bin\Debug\Operator.pdb

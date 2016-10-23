@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Diagnostics;
 
 namespace DADSTORM
 {
@@ -15,6 +16,10 @@ namespace DADSTORM
             if (line[0].Contains("OP"))
             {
                 return readOperatorDefinition(line);
+            }
+            if (line[0].Contains("Start"))
+            {
+                return readStartOperator(line);
             }
             Dictionary<string, string> parsedLineDictionary = new Dictionary<string, string>();
             parsedLineDictionary.Add("LINE_ID", "LIXO");
@@ -42,6 +47,7 @@ namespace DADSTORM
             }
             int newIndex = 10 + Int32.Parse(repFact);
             string type = line[newIndex + 2];
+            Debug.WriteLine("TYPE ====== " + type);
             string fieldNumber = "";
             string condition = "";
             string conditionValue = "";
@@ -59,6 +65,8 @@ namespace DADSTORM
 
                 case "FILTER":
                     string[] filter = line[newIndex + 3].Split(',');
+                    Debug.WriteLine("TLINE ====== " + line[newIndex + 3]);
+
                     fieldNumber = filter[0];
                     condition = filter[1];
                     conditionValue = filter[2];
@@ -81,6 +89,16 @@ namespace DADSTORM
             parsedLineDictionary.Add("CONDITION", condition);
             parsedLineDictionary.Add("CONDITION_VALUE", conditionValue);
 
+            return parsedLineDictionary;
+        }
+
+        private Dictionary<string, string> readStartOperator(string[] line)
+        {
+            Dictionary<string, string> parsedLineDictionary = new Dictionary<string, string>();
+            parsedLineDictionary.Add("LINE_ID", "START");
+
+            string operatorID = line[1];
+            parsedLineDictionary.Add("OPERATOR_ID", operatorID);
             return parsedLineDictionary;
         }
     }
