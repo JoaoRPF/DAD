@@ -28,6 +28,8 @@ namespace DADSTORM
 
         public static string getAllFieldsOperator(string key)
         {
+            string joinAddressesToSend = String.Join("$", operatorsDict[key].sendAddresses);
+
             string result = operatorsDict[key].id + " " +
                             operatorsDict[key].repID + " " +
                             operatorsDict[key].myAddress + " " +
@@ -36,11 +38,29 @@ namespace DADSTORM
                             operatorsDict[key].repFact + " " +
                             operatorsDict[key].type + " " +
                             operatorsDict[key].fieldNumber + " " +
-                            operatorsDict[key].condition + " " + 
-                            operatorsDict[key].conditionValue + " ";
-            //operatorsDict[key].sendAddresses + " " +
+                            operatorsDict[key].condition + " " +
+                            operatorsDict[key].conditionValue + " " +
+                            joinAddressesToSend + " ";
+            
             //operatorsDict[key].routing + " " +
             return result;
+        }
+
+        public static void setInfoToPreviousOperator(string operatorID, string addressToSend)
+        {
+            string[] separator = new string[] { "OP" };
+            string[] previousStringID = operatorID.Split(separator, StringSplitOptions.None);
+            int previousID = Int32.Parse(previousStringID[1]) - 1;
+            string previousOperatorID = "OP" + previousID;
+            Debug.WriteLine("PREVIOUS ID = " + previousOperatorID);
+
+            foreach (string key in operatorsDict.Keys)
+            {
+                if (key.Contains(previousOperatorID))
+                {
+                    operatorsDict[key].sendAddresses.Add(addressToSend);
+                }
+            }
         }
 
     }
@@ -90,6 +110,7 @@ namespace DADSTORM
                 finalOperator.duplicate(_operator);
                 PCS.operatorsDict.Add(finalOperator.id + "-" + finalOperator.repID, finalOperator);
                 operatorNumber++;
+                PCS.setInfoToPreviousOperator(finalOperator.id, address);
             }
 
             foreach (string key in PCS.operatorsDict.Keys)

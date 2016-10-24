@@ -43,12 +43,16 @@ namespace DADSTORM
             if (_operator.type.Equals("UNIQ"))
             {
                 _operator.fieldNumber = Int32.Parse(args[7]);
+                if (args.Length > 8)
+                    _operator.sendAddresses = addressesToSendToList(args[8]);
             }
             else if (_operator.type.Equals("FILTER"))
             {
                 _operator.fieldNumber = Int32.Parse(args[7]);
                 _operator.condition = args[8];
                 _operator.conditionValue = args[9];
+                if (args.Length > 10)
+                    _operator.sendAddresses = addressesToSendToList(args[10]);
             }
             /*else if (_operator.type.Equals("CUSTOM"))
             {
@@ -57,6 +61,16 @@ namespace DADSTORM
             _operator.print();
             _operator.connectToPuppetMaster();
             System.Console.ReadLine();
+        }
+
+        private static List<string> addressesToSendToList(string addressesToSend)
+        {
+            List<string> listAddressesToSend = new List<string>();
+            foreach (string address in addressesToSend.Split('$'))
+            {
+                listAddressesToSend.Add(address);    
+            }
+            return listAddressesToSend;
         }
 
         private void connectToPuppetMaster()
@@ -99,6 +113,12 @@ namespace DADSTORM
             Console.WriteLine("FIELD_NUMBER = " + this.fieldNumber);
             Console.WriteLine("CONDITION = " + this.condition);
             Console.WriteLine("CONDITION_VALUE = " + this.conditionValue);
+            int cont = 0;
+            foreach (string address in this.sendAddresses)
+            {
+                Console.WriteLine("ADDRESS TO SEND " + cont + ": " + address);
+                cont++;
+            }
             //Console.WriteLine("ROUTING = " + this.routing);
         }
     }
