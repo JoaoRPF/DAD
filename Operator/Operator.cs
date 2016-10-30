@@ -4,11 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels.Tcp;
+using System.IO;
+using System.Diagnostics;
 
 namespace DADSTORM
 {
-    public class Operator
+    public class Operator : MarshalByRefObject, OperatorServices
     {
         public string id = "";
         public int repID = -1;
@@ -17,11 +20,15 @@ namespace DADSTORM
         public string status = "";
         public int repFact = 0;
         public string type = "";
-        public int fieldNumber = 0;
+        public int fieldNumber = -1;
         public string condition = "";
         public string conditionValue = "";
         public List<string> sendAddresses = new List<string>();
         public string routing = "";
+
+        public static TcpChannel channel;
+        public static Operator _operator;
+        public List<string[]> inputTuples = new List<string[]>();
 
         //public string dll = "";
         //public classCustom = "";
@@ -32,10 +39,22 @@ namespace DADSTORM
         static void Main(string[] args)
         {
             Console.WriteLine("SIZE ARGS = " + args.Length);
-            Operator _operator = new Operator();
+            string operatorType = args[6];
+            switch (operatorType){
+                case "COUNT":
+                    _operator = new Count();
+                    break;
+                case "UNIQ":
+                    _operator = new Uniq();
+                    break;
+                default:
+                    _operator = new Operator();
+                    break;
+            }
             _operator.id = args[0];
             _operator.repID = Int32.Parse(args[1]);
             _operator.myAddress = args[2];
+            channel = new TcpChannel(getPort(_operator.myAddress));
             _operator.input = args[3];
             _operator.status = args[4];
             _operator.repFact = Int32.Parse(args[5]);
@@ -60,7 +79,17 @@ namespace DADSTORM
             }*/
             _operator.print();
             _operator.connectToPuppetMaster();
-            System.Console.ReadLine();
+
+            ChannelServices.RegisterChannel(channel, true);
+            RemotingConfiguration.RegisterWellKnownServiceType(
+                typeof(OperatorServices),
+                "OperatorServices",
+                WellKnownObjectMode.Singleton);
+
+            if (_operator.id.Equals("OP1"))
+                _operator.execute(null);
+
+            System.Console.ReadLine(); //So para manter a janela aberta
         }
 
         private static List<string> addressesToSendToList(string addressesToSend)
@@ -71,6 +100,12 @@ namespace DADSTORM
                 listAddressesToSend.Add(address);    
             }
             return listAddressesToSend;
+        }
+
+        private static int getPort(string address)
+        {
+            int port = Int32.Parse(address.Split(':')[2].Split('/')[0]);
+            return port;
         }
 
         private void connectToPuppetMaster()
@@ -120,6 +155,49 @@ namespace DADSTORM
                 cont++;
             }
             //Console.WriteLine("ROUTING = " + this.routing);
+        }
+
+        public List<string[]> readInputFromFile(string inputFilepath)
+        {
+            List<string[]> inputList = new List<string[]>();
+            string[] lines = File.ReadAllLines(inputFilepath);
+            for (int i=0; i < lines.Length; i++)
+            {
+                string[] line = lines[i].Split(new[] {", "}, StringSplitOptions.None);
+                if (!String.IsNullOrEmpty(line[0])){
+                    if (!line[0].StartsWith("%%"))
+                    {
+                        string[] fields = new string[line.Length];
+                        for (int j=0; j < line.Length; j++)
+                        {
+                            fields[j] = line[j];
+                        }
+                        inputList.Add(fields);
+                    }
+                }
+            }
+            return inputList;
+        }
+
+        public void printTuples(List<string[]> tuples)
+        {
+            foreach (string[] _tuple in tuples){
+                for (int i=0; i<_tuple.Length; i++)
+                {
+                    Console.WriteLine(i + " = " + _tuple[i]);
+                }
+            }
+        }
+
+        public virtual void execute()
+        {
+            Console.WriteLine("GENERAL OPERATOR");
+        }
+
+        public void exchangeTuples(string[] tuple)
+        {
+            inputTuples.Add(tuple);
+            //_operator.execute();
         }
     }
 }
