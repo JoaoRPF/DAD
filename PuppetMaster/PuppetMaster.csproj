@@ -83,6 +83,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OperatorServices\OperatorServices.csproj">
+      <Project>{4127331b-7dee-4cbf-9936-442a75544e84}</Project>
+      <Name>OperatorServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Operator\Operator.csproj">
+      <Project>{d60356da-371f-40c0-a7cc-0f4f3665fd5a}</Project>
+      <Name>Operator</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PCServices\PCServices.csproj">
       <Project>{c22f3e94-c7ec-4702-8e1b-a2c367139189}</Project>
       <Name>PCServices</Name>

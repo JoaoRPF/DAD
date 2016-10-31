@@ -16,10 +16,6 @@ namespace DADSTORM
             if (this.input.Contains(".dat")){
                 tuples = readInputFromFile(this.input);
             }
-            else
-            {
-                tuples = tuplesInput;
-            }
             printTuples(tuples);
             int count = tuples.Count;
             Console.WriteLine("Count = " + count);

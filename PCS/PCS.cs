@@ -28,7 +28,8 @@ namespace DADSTORM
 
         public static string getAllFieldsOperator(string key)
         {
-            string joinAddressesToSend = String.Join("$", operatorsDict[key].sendAddresses);
+            //string joinAddressesToSend = String.Join("$", operatorsDict[key].sendAddresses);
+            string joinPreviousAddresses = String.Join("$", operatorsDict[key].previousAddresses);
 
             string result = operatorsDict[key].id + " " +
                             operatorsDict[key].repID + " " +
@@ -37,16 +38,16 @@ namespace DADSTORM
                             operatorsDict[key].status + " " +
                             operatorsDict[key].repFact + " " +
                             operatorsDict[key].type + " " +
+                            operatorsDict[key].routing + " " +
                             operatorsDict[key].fieldNumber + " " +
                             operatorsDict[key].condition + " " +
                             operatorsDict[key].conditionValue + " " +
-                            joinAddressesToSend + " ";
+                            joinPreviousAddresses + " ";
             
-            //operatorsDict[key].routing + " " +
             return result;
         }
 
-        public static void setInfoToPreviousOperator(string operatorID, string addressToSend)
+        public static void setMyPreviousAddresses(string operatorID)
         {
             string[] separator = new string[] { "OP" };
             string[] previousStringID = operatorID.Split(separator, StringSplitOptions.None);
@@ -58,11 +59,28 @@ namespace DADSTORM
             {
                 if (key.Contains(previousOperatorID))
                 {
-                    operatorsDict[key].sendAddresses.Add(addressToSend);
+                    operatorsDict[key].previousAddresses.Add(operatorsDict[key].myAddress);
                 }
             }
         }
 
+        public static string startOperator(string operatorID)
+        {
+            foreach (string key in PCS.operatorsDict.Keys)
+            {
+                if (key.Contains(operatorID))
+                {
+                    string operatorPath = BuildPaths.getExecPath("\\Operator\\bin\\Debug\\Operator.exe");
+                    string operatorArgs = PCS.getAllFieldsOperator(key);
+                    ProcessStartInfo operatorStartInfo = new ProcessStartInfo();
+                    operatorStartInfo.FileName = operatorPath;
+                    operatorStartInfo.Arguments = operatorArgs;
+                    Process operatorProcess = Process.Start(operatorStartInfo);
+                    Console.WriteLine("Comecei operador com id: " + operatorID + " e repID: " + PCS.operatorsDict[key].repID);
+                }
+            }
+            return "Operator " + operatorID + " launched";
+        }
     }
 
     class PCServ : MarshalByRefObject, PCServices
@@ -110,7 +128,7 @@ namespace DADSTORM
                 finalOperator.duplicate(_operator);
                 PCS.operatorsDict.Add(finalOperator.id + "-" + finalOperator.repID, finalOperator);
                 operatorNumber++;
-                PCS.setInfoToPreviousOperator(finalOperator.id, address);
+                PCS.setMyPreviousAddresses(finalOperator.id);
             }
 
             foreach (string key in PCS.operatorsDict.Keys)
@@ -120,26 +138,11 @@ namespace DADSTORM
                 Console.WriteLine("\r\n");
             }
 
+            PCS.startOperator(_operator.id);
             return _operator.id + " recebido pelo PCS"; ;
         }
 
-        public string startOperator(string operatorID)
-        {
-            foreach (string key in PCS.operatorsDict.Keys)
-            {
-                if (key.Contains(operatorID))
-                {
-                    string operatorPath = BuildPaths.getExecPath("\\Operator\\bin\\Debug\\Operator.exe");
-                    string operatorArgs = PCS.getAllFieldsOperator(key);
-                    ProcessStartInfo operatorStartInfo = new ProcessStartInfo();
-                    operatorStartInfo.FileName = operatorPath;
-                    operatorStartInfo.Arguments = operatorArgs;
-                    Process operatorProcess = Process.Start(operatorStartInfo);
-                    Console.WriteLine("Comecei operador com id: " + operatorID + " e repID: " + PCS.operatorsDict[key].repID);
-                }
-            }
-            return "Operator " + operatorID + " launched";
-        }
+        
     }
 
     public static class BuildPaths

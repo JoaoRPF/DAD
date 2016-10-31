@@ -7,6 +7,7 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels.Tcp;
 using System.IO;
+using System.Threading;
 using System.Diagnostics;
 
 namespace DADSTORM
@@ -20,15 +21,18 @@ namespace DADSTORM
         public string status = "";
         public int repFact = 0;
         public string type = "";
+        public string routing = "";
         public int fieldNumber = -1;
         public string condition = "";
         public string conditionValue = "";
         public List<string> sendAddresses = new List<string>();
-        public string routing = "";
+        public List<string> previousAddresses = new List<string>();
 
         public static TcpChannel channel;
         public static Operator _operator;
+        public static OperatorServices operatorServices;
         public List<string[]> inputTuples = new List<string[]>();
+        public List<string[]> outputTuples = new List<string[]>();
 
         //public string dll = "";
         //public classCustom = "";
@@ -59,47 +63,56 @@ namespace DADSTORM
             _operator.status = args[4];
             _operator.repFact = Int32.Parse(args[5]);
             _operator.type = args[6];
+            _operator.routing = args[7];
             if (_operator.type.Equals("UNIQ"))
             {
-                _operator.fieldNumber = Int32.Parse(args[7]);
-                if (args.Length > 8)
-                    _operator.sendAddresses = addressesToSendToList(args[8]);
+                _operator.fieldNumber = Int32.Parse(args[8]);
+                if (args.Length > 9)
+                    _operator.previousAddresses = previousAddressesToList(args[9]);
             }
             else if (_operator.type.Equals("FILTER"))
             {
-                _operator.fieldNumber = Int32.Parse(args[7]);
-                _operator.condition = args[8];
-                _operator.conditionValue = args[9];
-                if (args.Length > 10)
-                    _operator.sendAddresses = addressesToSendToList(args[10]);
+                _operator.fieldNumber = Int32.Parse(args[8]);
+                _operator.condition = args[9];
+                _operator.conditionValue = args[10];
+                if (args.Length > 11)
+                    _operator.previousAddresses = previousAddressesToList(args[11]);
             }
             /*else if (_operator.type.Equals("CUSTOM"))
             {
 
             }*/
-            _operator.print();
-            _operator.connectToPuppetMaster();
 
             ChannelServices.RegisterChannel(channel, true);
             RemotingConfiguration.RegisterWellKnownServiceType(
-                typeof(OperatorServices),
-                "OperatorServices",
+                typeof(Operator),
+                "op",
                 WellKnownObjectMode.Singleton);
 
-            if (_operator.id.Equals("OP1"))
-                _operator.execute(null);
+            sendAddressesToPreviousOP();
 
             System.Console.ReadLine(); //So para manter a janela aberta
         }
 
-        private static List<string> addressesToSendToList(string addressesToSend)
+        private static void sendAddressesToPreviousOP()
         {
-            List<string> listAddressesToSend = new List<string>();
+            foreach (string address in _operator.previousAddresses)
+            {
+                operatorServices = (OperatorServices)Activator.GetObject(
+                                          typeof(OperatorServices),
+                                          address);
+                operatorServices.setSendAddresses(_operator.myAddress);
+            }
+        }
+
+        private static List<string> previousAddressesToList(string addressesToSend)
+        {
+            List<string> listAddresses = new List<string>();
             foreach (string address in addressesToSend.Split('$'))
             {
-                listAddressesToSend.Add(address);    
+                listAddresses.Add(address);    
             }
-            return listAddressesToSend;
+            return listAddresses;
         }
 
         private static int getPort(string address)
@@ -108,11 +121,29 @@ namespace DADSTORM
             return port;
         }
 
+        private static void readFileToInputBuffer()
+        {
+            string[] lines = File.ReadAllLines(_operator.input);
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string[] line = lines[i].Split(new[] { ", " }, StringSplitOptions.None);
+                if (!String.IsNullOrEmpty(line[0]))
+                {
+                    if (!line[0].StartsWith("%%"))
+                    {
+                        string[] fields = new string[line.Length];
+                        for (int j = 0; j < line.Length; j++)
+                        {
+                            fields[j] = line[j];
+                        }
+                        _operator.inputTuples.Add(fields);
+                    }
+                }
+            }
+        }
+
         private void connectToPuppetMaster()
         {
-            TcpChannel channel = new TcpChannel();
-            ChannelServices.RegisterChannel(channel, true);
-
             PuppetMasterServices services = (PuppetMasterServices)Activator.GetObject(
                 typeof(PuppetMasterServices),
                 "tcp://localhost:10000/PuppetMasterServices");
@@ -132,7 +163,7 @@ namespace DADSTORM
             this.fieldNumber = _operator.fieldNumber;
             this.condition = _operator.condition;
             this.conditionValue = _operator.conditionValue;
-            //this.routing = _operator.routing;
+            this.routing = _operator.routing;
 
         }
 
@@ -154,7 +185,13 @@ namespace DADSTORM
                 Console.WriteLine("ADDRESS TO SEND " + cont + ": " + address);
                 cont++;
             }
-            //Console.WriteLine("ROUTING = " + this.routing);
+            cont = 0;
+            foreach (string address in this.previousAddresses)
+            {
+                Console.WriteLine("PREVIOUS " + cont + ": " + address);
+                cont++;
+            }
+            Console.WriteLine("ROUTING = " + this.routing);
         }
 
         public List<string[]> readInputFromFile(string inputFilepath)
@@ -194,10 +231,62 @@ namespace DADSTORM
             Console.WriteLine("GENERAL OPERATOR");
         }
 
+        public void startToProcess()
+        {
+            _operator.print();
+
+            Thread executeThread = new Thread(_operator.execute);
+            executeThread.Start();
+
+            Thread sendTuplesThread = new Thread(_operator.sendTuples);
+            sendTuplesThread.Start();
+
+            if (_operator.input.Contains(".dat"))
+            {
+                readFileToInputBuffer();
+            }
+        }
+
+        public void sendTuples()
+        {
+            Console.WriteLine("antes do while");
+            Debug.WriteLine("antes do whilee");
+            while (true)
+            {
+                if (_operator.outputTuples.Count != 0)
+                {
+                    string[] outputTuple = _operator.outputTuples[0];
+                    switch (_operator.routing)
+                    {
+                        case "primary":
+                            Console.WriteLine("send tuple -> " + outputTuple[1]);
+                            if (_operator.sendAddresses.Count != 0)
+                            {
+                                string sendAddress = _operator.sendAddresses[0];
+                                operatorServices = (OperatorServices)Activator.GetObject(
+                                                    typeof(OperatorServices),
+                                                    sendAddress);
+                                operatorServices.exchangeTuples(outputTuple);
+                            }
+                            break;
+
+                        default:
+                            break;
+                    }
+                    _operator.outputTuples.RemoveAt(0);
+                }
+            }
+        }
+
         public void exchangeTuples(string[] tuple)
         {
-            inputTuples.Add(tuple);
-            //_operator.execute();
+            Console.WriteLine("recebi tuple = " + tuple[1]);
+            _operator.inputTuples.Add(tuple);
+        }
+
+        public void setSendAddresses(string sendAddress)
+        {
+            _operator.sendAddresses.Add(sendAddress);
         }
     }
 }

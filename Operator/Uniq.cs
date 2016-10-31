@@ -3,30 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace DADSTORM
 {
     class Uniq : Operator
     {
-        private List<string[]> tuples = new List<string[]>();
         private List<string[]> uniqTuples = new List<string[]>();
 
         public override void execute()
         {
             Console.WriteLine("EXECUTE UNIQ");
-            if (this.input.Contains(".dat"))
+
+            while (true)
             {
-                tuples = readInputFromFile(this.input);
-            }
-            //printTuples(tuples);
-            foreach (string[] _tuple in tuples)
-            {
-                if (!uniqTuples.Exists(x => x[this.fieldNumber - 1].Equals(_tuple[this.fieldNumber - 1]))) //ORGULHO
+                if (this.inputTuples.Count != 0)
                 {
-                    uniqTuples.Add(_tuple);
+                    string[] inputTuple = this.inputTuples[0];
+                    Console.WriteLine("execute tuple -> " + inputTuple[1]);
+                    if (!uniqTuples.Exists(x => x[this.fieldNumber - 1].Equals(inputTuple[this.fieldNumber - 1]))) //MAIS ORGULHO
+                    {
+                        uniqTuples.Add(inputTuple);
+                        outputTuples.Add(inputTuple);
+                    }
+                    inputTuples.RemoveAt(0);
                 }
             }
-            printTuples(uniqTuples);
         }
     }
 }

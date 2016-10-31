@@ -9,3 +9,7 @@ c:\users\joao ferreira\documents\visual studio 2015\Projects\DADSTORM\PuppetMast
 c:\users\joao ferreira\documents\visual studio 2015\Projects\DADSTORM\PuppetMaster\bin\Debug\PCServices.dll
 c:\users\joao ferreira\documents\visual studio 2015\Projects\DADSTORM\PuppetMaster\bin\Debug\PCServices.pdb
 c:\users\joao ferreira\documents\visual studio 2015\Projects\DADSTORM\PuppetMaster\obj\Debug\DADSTORM.Form1.resources
+C:\Users\Joao Ferreira\Documents\Visual Studio 2015\Projects\DADSTORM\PuppetMaster\bin\Debug\OperatorServices.dll
+C:\Users\Joao Ferreira\Documents\Visual Studio 2015\Projects\DADSTORM\PuppetMaster\bin\Debug\OperatorServices.pdb
+C:\Users\Joao Ferreira\Documents\Visual Studio 2015\Projects\DADSTORM\PuppetMaster\bin\Debug\Operator.exe
+C:\Users\Joao Ferreira\Documents\Visual Studio 2015\Projects\DADSTORM\PuppetMaster\bin\Debug\Operator.pdb

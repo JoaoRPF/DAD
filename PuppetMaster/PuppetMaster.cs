@@ -20,6 +20,7 @@ namespace DADSTORM
         /// </summary>
 
         public static PCServices services;
+        public static OperatorServices opServices;
         public static Form1 formPuppetMaster = new Form1();
         public static TcpChannel channel = new TcpChannel(10000);
         private static Dictionary<string, string> operatorsAddresses = new Dictionary<string, string>(); //addresses by id TODOOOOO
@@ -68,6 +69,15 @@ namespace DADSTORM
 
                     if (lineID.Equals("OP"))
                     {
+                        int replicaCount = 0;
+                        string operatorID = lineContentDictionary["OPERATOR_ID"];
+                        foreach(string address in lineContentDictionary["ADDRESSES"].Split('$'))
+                        {
+                            string replicaID = operatorID + "-" + replicaCount;
+                            operatorsAddresses.Add(replicaID, address);
+                            replicaCount++;
+                        }
+
                         foreach (string key in lineContentDictionary.Keys)
                         {
                             string value = lineContentDictionary[key];
@@ -81,9 +91,20 @@ namespace DADSTORM
                     {
                         string operatorID = lineContentDictionary["OPERATOR_ID"];
                         PuppetMaster.formPuppetMaster.addNewLineToLog("PCS is about to start: " + operatorID);
-                        string result = services.startOperator(operatorID);
-                        PuppetMaster.formPuppetMaster.addNewLineToLog("Msg from PCS: " + result);
 
+                        foreach (string replicaID in operatorsAddresses.Keys)
+                        {
+                            if (replicaID.Contains(operatorID))
+                            {
+                                Debug.WriteLine("REPLICA ADDRESS = " + operatorsAddresses[replicaID]);
+                                PuppetMaster.formPuppetMaster.addNewLineToLog("REPLICA ADDRESS = " + operatorsAddresses[replicaID]);
+                                opServices = (OperatorServices)Activator.GetObject(
+                                            typeof(OperatorServices),
+                                            operatorsAddresses[replicaID]);
+
+                                opServices.startToProcess();
+                            }
+                        }
                     }
                 }
             }

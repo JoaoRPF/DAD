@@ -8,3 +8,5 @@ c:\users\joao ferreira\documents\visual studio 2015\Projects\DADSTORM\PCS\bin\De
 c:\users\joao ferreira\documents\visual studio 2015\Projects\DADSTORM\PCS\bin\Debug\PCServices.pdb
 C:\Users\Joao Ferreira\Documents\Visual Studio 2015\Projects\DADSTORM\PCS\bin\Debug\Operator.exe
 C:\Users\Joao Ferreira\Documents\Visual Studio 2015\Projects\DADSTORM\PCS\bin\Debug\Operator.pdb
+C:\Users\Joao Ferreira\Documents\Visual Studio 2015\Projects\DADSTORM\PCS\bin\Debug\OperatorServices.dll
+C:\Users\Joao Ferreira\Documents\Visual Studio 2015\Projects\DADSTORM\PCS\bin\Debug\OperatorServices.pdb
