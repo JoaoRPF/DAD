@@ -47,21 +47,35 @@ namespace DADSTORM
             return result;
         }
 
-        public static void setMyPreviousAddresses(string operatorID)
+        public static void setMyPreviousAddresses(string operatorID, int repID)
         {
+            string operatorKey = operatorID + "-" + repID;
+
+            foreach (string previousNodeId in operatorsDict[operatorKey].inputOPs)
+            {
+                foreach (string previousOpRep in operatorsDict.Keys)
+                {
+                    if (previousOpRep.Contains(previousNodeId))
+                    {
+                        operatorsDict[operatorKey].previousAddresses.Add(operatorsDict[previousOpRep].myAddress);
+                    }
+                }
+            }
+            /*
             string[] separator = new string[] { "OP" };
             string[] previousStringID = operatorID.Split(separator, StringSplitOptions.None);
             int previousID = Int32.Parse(previousStringID[1]) - 1;
             string previousOperatorID = "OP" + previousID;
-            Debug.WriteLine("PREVIOUS ID = " + previousOperatorID);
+            //Debug.WriteLine("PREVIOUS ID = " + previousOperatorID);
 
-            foreach (string key in operatorsDict.Keys)
+            foreach (string previousOP in operatorsDict.Keys)
             {
-                if (key.Contains(previousOperatorID))
+                if (previousOP.Contains(previousOperatorID))
                 {
-                    operatorsDict[key].previousAddresses.Add(operatorsDict[key].myAddress);
+                    operatorsDict[operatorKey].previousAddresses.Add(operatorsDict[previousOP].myAddress);
                 }
             }
+            */
         }
 
         public static string startOperator(string operatorID)
@@ -128,7 +142,7 @@ namespace DADSTORM
                 finalOperator.duplicate(_operator);
                 PCS.operatorsDict.Add(finalOperator.id + "-" + finalOperator.repID, finalOperator);
                 operatorNumber++;
-                PCS.setMyPreviousAddresses(finalOperator.id);
+                PCS.setMyPreviousAddresses(finalOperator.id, finalOperator.repID);
             }
 
             foreach (string key in PCS.operatorsDict.Keys)

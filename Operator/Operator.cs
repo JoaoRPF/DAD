@@ -18,6 +18,8 @@ namespace DADSTORM
         public int repID = -1;
         public string myAddress = "";
         public string input = "";
+        public List<string> inputOPs = new List<string>();
+        public List<string> inputFile = new List<string>();
         public string status = "";
         public int repFact = 0;
         public string type = "";
@@ -59,7 +61,20 @@ namespace DADSTORM
             _operator.repID = Int32.Parse(args[1]);
             _operator.myAddress = args[2];
             channel = new TcpChannel(getPort(_operator.myAddress));
-            _operator.input = args[3];
+            foreach (string input in args[3].Split('$'))
+            {
+                if (input.Contains(".dat"))
+                {
+                    _operator.inputFile.Add(input);
+                } else if (input.Contains("OP"))
+                {
+                    _operator.inputOPs.Add(input);
+                } else
+                {
+                    System.Console.WriteLine("unrecognized input!");
+                }
+            }
+            //_operator.input = args[3];
             _operator.status = args[4];
             _operator.repFact = Int32.Parse(args[5]);
             _operator.type = args[6];
@@ -121,9 +136,9 @@ namespace DADSTORM
             return port;
         }
 
-        private static void readFileToInputBuffer()
+        private static void readFileToInputBuffer(string file)
         {
-            string[] lines = File.ReadAllLines(_operator.input);
+            string[] lines = File.ReadAllLines(file);
             for (int i = 0; i < lines.Length; i++)
             {
                 string[] line = lines[i].Split(new[] { ", " }, StringSplitOptions.None);
@@ -157,6 +172,8 @@ namespace DADSTORM
             this.repID = _operator.repID;
             this.myAddress = _operator.myAddress;
             this.input = _operator.input;
+            //this.inputOPs = _operator.inputOPs;
+            //this.inputFile = _operator.inputFile;
             this.status = _operator.status;
             this.repFact = _operator.repFact;
             this.type = _operator.type;
@@ -172,7 +189,14 @@ namespace DADSTORM
             Console.WriteLine("ID = " + this.id);
             Console.WriteLine("REP_ID = " + this.repID);
             Console.WriteLine("MY_ADDRESS = " + this.myAddress);
-            Console.WriteLine("INPUT = " + this.input);
+            foreach (string input in this.inputFile)
+            {
+                Console.WriteLine("INPUT_FILE= " + input);
+            }
+            foreach (string input in this.inputOPs)
+            {
+                Console.WriteLine("INPUT_OP = " + input);
+            }
             Console.WriteLine("STATUS = " + this.status);
             Console.WriteLine("REP_FACT = " + this.repFact);
             Console.WriteLine("TYPE = " + this.type);
@@ -241,9 +265,9 @@ namespace DADSTORM
             Thread sendTuplesThread = new Thread(_operator.sendTuples);
             sendTuplesThread.Start();
 
-            if (_operator.input.Contains(".dat"))
+            foreach (string file in inputFile)
             {
-                readFileToInputBuffer();
+                readFileToInputBuffer(file);
             }
         }
 

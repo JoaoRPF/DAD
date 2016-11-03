@@ -30,11 +30,23 @@ namespace DADSTORM
             Dictionary<string, string> parsedLineDictionary = new Dictionary<string, string>();
             parsedLineDictionary.Add("LINE_ID", "OP");
             string id = line[0];
-            string input = line[3];
-            string repFact = line[6];
-            string routing = line[8];
+            string input = "";
+            int inputNumber = 0;
+            while (true)
+            {
+                if (line[3 + inputNumber].Contains(".dat") || line[3 + inputNumber].Contains("OP"))
+                {
+                    input += line[3 + inputNumber].Replace(',', '$');
+                }
+                else break;
+                inputNumber++;
+            }
+            inputNumber--;
+
+            string repFact = line[6 + inputNumber];
+            string routing = line[8 + inputNumber];
             List<string> addressesList = new List<string>();
-            for (int j = 10; j < 10 + Int32.Parse(repFact); j++)
+            for (int j = 10 + inputNumber; j < 10 + inputNumber + Int32.Parse(repFact); j++)
             {
                 if (line[j].Contains(","))
                 {
@@ -45,7 +57,7 @@ namespace DADSTORM
                     addressesList.Add(line[j]);
                 }
             }
-            int newIndex = 10 + Int32.Parse(repFact);
+            int newIndex = 10 + Int32.Parse(repFact) + inputNumber;
             string type = line[newIndex + 2];
             Debug.WriteLine("TYPE ====== " + type);
             string fieldNumber = "";

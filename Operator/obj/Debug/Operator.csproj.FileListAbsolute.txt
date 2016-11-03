@@ -8,3 +8,13 @@ C:\Users\Joao Ferreira\Documents\Visual Studio 2015\Projects\DADSTORM\Operator\b
 C:\Users\Joao Ferreira\Documents\Visual Studio 2015\Projects\DADSTORM\Operator\obj\Debug\Operator.csprojResolveAssemblyReference.cache
 C:\Users\Joao Ferreira\Documents\Visual Studio 2015\Projects\DADSTORM\Operator\bin\Debug\OperatorServices.dll
 C:\Users\Joao Ferreira\Documents\Visual Studio 2015\Projects\DADSTORM\Operator\bin\Debug\OperatorServices.pdb
+C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\Operator\bin\Debug\Operator.exe.config
+C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\Operator\bin\Debug\Operator.exe
+C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\Operator\bin\Debug\Operator.pdb
+C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\Operator\bin\Debug\OperatorServices.dll
+C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\Operator\bin\Debug\PCServices.dll
+C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\Operator\bin\Debug\OperatorServices.pdb
+C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\Operator\bin\Debug\PCServices.pdb
+C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\Operator\obj\Debug\Operator.csprojResolveAssemblyReference.cache
+C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\Operator\obj\Debug\Operator.exe
+C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\Operator\obj\Debug\Operator.pdb

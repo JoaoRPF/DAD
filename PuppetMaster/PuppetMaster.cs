@@ -55,6 +55,9 @@ namespace DADSTORM
         public static void startReadingConfigFile(string filepath)
         {
             PuppetMasterReadConfig readConfig = new PuppetMasterReadConfig();
+
+            //TODO FileNotFound Exception
+
             string[] lines = File.ReadAllLines(filepath);
             for (int i = 0; i < lines.Length; i++)
             {
