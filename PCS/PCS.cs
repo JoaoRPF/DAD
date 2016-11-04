@@ -49,7 +49,16 @@ namespace DADSTORM
 
         public static void setMyPreviousAddresses(string operatorID, int repID)
         {
+
             string operatorKey = operatorID + "-" + repID;
+
+            foreach (string input in operatorsDict[operatorKey].input.Split('$'))
+            {
+                if (input.Contains("OP"))
+                {
+                    operatorsDict[operatorKey].inputOPs.Add(input);
+                }
+            }
 
             foreach (string previousNodeId in operatorsDict[operatorKey].inputOPs)
             {

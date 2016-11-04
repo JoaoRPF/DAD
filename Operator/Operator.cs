@@ -191,7 +191,7 @@ namespace DADSTORM
             Console.WriteLine("MY_ADDRESS = " + this.myAddress);
             foreach (string input in this.inputFile)
             {
-                Console.WriteLine("INPUT_FILE= " + input);
+                Console.WriteLine("INPUT_FILE = " + input);
             }
             foreach (string input in this.inputOPs)
             {
@@ -265,7 +265,7 @@ namespace DADSTORM
             Thread sendTuplesThread = new Thread(_operator.sendTuples);
             sendTuplesThread.Start();
 
-            foreach (string file in inputFile)
+            foreach (string file in _operator.inputFile)
             {
                 readFileToInputBuffer(file);
             }
