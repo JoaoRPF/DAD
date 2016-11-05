@@ -20,7 +20,7 @@ namespace DADSTORM
                 if (this.inputTuples.Count != 0)
                 {
                     string[] inputTuple = this.inputTuples[0];
-                    Console.WriteLine("execute tuple -> " + inputTuple[1]);
+                    Console.WriteLine("execute tuple -> " + inputTuple[0]);
                     if (!uniqTuples.Exists(x => x[this.fieldNumber - 1].Equals(inputTuple[this.fieldNumber - 1]))) //MAIS ORGULHO
                     {
                         uniqTuples.Add(inputTuple);

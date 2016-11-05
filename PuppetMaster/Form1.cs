@@ -26,7 +26,7 @@ namespace DADSTORM
             /*string result = PuppetMaster.services.printHello();
             logText.Text += "\r\n" + result;
             sendStuffToPCS();*/
-            PuppetMaster.startReadingConfigFile(fileText.Text);
+            PuppetMaster.startReadingConfigFile(fileText.Text, false);
         }
 
         private void sendStuffToPCS()
@@ -45,6 +45,11 @@ namespace DADSTORM
         public string getFileText()
         {
             return fileText.Text;
+        }
+
+        private void stepButton_Click(object sender, EventArgs e)
+        {
+            PuppetMaster.startReadingConfigFile(fileText.Text, true);
         }
     }
 }

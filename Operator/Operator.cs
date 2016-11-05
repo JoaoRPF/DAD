@@ -9,6 +9,7 @@ using System.Runtime.Remoting.Channels.Tcp;
 using System.IO;
 using System.Threading;
 using System.Diagnostics;
+using System.Collections.ObjectModel;
 
 namespace DADSTORM
 {
@@ -27,7 +28,7 @@ namespace DADSTORM
         public int fieldNumber = -1;
         public string condition = "";
         public string conditionValue = "";
-        public List<string> sendAddresses = new List<string>();
+        public Dictionary<string, string> sendAddresses = new Dictionary<string, string>();
         public List<string> previousAddresses = new List<string>();
 
         public static TcpChannel channel;
@@ -116,7 +117,8 @@ namespace DADSTORM
                 operatorServices = (OperatorServices)Activator.GetObject(
                                           typeof(OperatorServices),
                                           address);
-                operatorServices.setSendAddresses(_operator.myAddress);
+                string replica = _operator.id + "-" + _operator.repID;
+                operatorServices.setSendAddresses(replica, _operator.myAddress);
             }
         }
 
@@ -204,7 +206,7 @@ namespace DADSTORM
             Console.WriteLine("CONDITION = " + this.condition);
             Console.WriteLine("CONDITION_VALUE = " + this.conditionValue);
             int cont = 0;
-            foreach (string address in this.sendAddresses)
+            foreach (string address in this.sendAddresses.Values)
             {
                 Console.WriteLine("ADDRESS TO SEND " + cont + ": " + address);
                 cont++;
@@ -273,44 +275,56 @@ namespace DADSTORM
 
         public void sendTuples()
         {
-            Console.WriteLine("antes do while");
-            Debug.WriteLine("antes do whilee");
+            Console.WriteLine("sendTuples starting");
             while (true)
             {
                 if (_operator.outputTuples.Count != 0)
                 {
                     string[] outputTuple = _operator.outputTuples[0];
-                    switch (_operator.routing)
+                    lock (_operator.sendAddresses)
                     {
-                        case "primary":
-                            Console.WriteLine("send tuple -> " + outputTuple[1]);
-                            if (_operator.sendAddresses.Count != 0)
-                            {
-                                string sendAddress = _operator.sendAddresses[0];
-                                operatorServices = (OperatorServices)Activator.GetObject(
-                                                    typeof(OperatorServices),
-                                                    sendAddress);
-                                operatorServices.exchangeTuples(outputTuple);
-                            }
-                            break;
+                        switch (_operator.routing)
+                        {
+                            case "primary":
+                                //Console.WriteLine("\n\r send adress -> " + _operator.sendAddresses.Count);
+                                if (_operator.sendAddresses.Count != 0)
+                                {
+                                    foreach (string replicaID in _operator.sendAddresses.Keys)
+                                    {
+                                        if (replicaID.Contains("0"))
+                                        {
+                                            string sendAddress = _operator.sendAddresses[replicaID];
+                                            Console.WriteLine("SEND adress -> " + sendAddress + " tuple -> " + outputTuple[0]);
+                                            operatorServices = (OperatorServices)Activator.GetObject(
+                                                                typeof(OperatorServices),
+                                                                sendAddress);
+                                            operatorServices.exchangeTuples(outputTuple);
+                                            _operator.outputTuples.RemoveAt(0);
+                                        }
+                                    }
+                                }
+                                break;
 
-                        default:
-                            break;
+                            default:
+                                break;
+                        }
                     }
-                    _operator.outputTuples.RemoveAt(0);
                 }
             }
         }
 
         public void exchangeTuples(string[] tuple)
         {
-            Console.WriteLine("recebi tuple = " + tuple[1]);
+            Console.WriteLine("RECIEVE tuple = " + tuple[1]);
             _operator.inputTuples.Add(tuple);
         }
 
-        public void setSendAddresses(string sendAddress)
+        public void setSendAddresses(string operatorID, string sendAddress)
         {
-            _operator.sendAddresses.Add(sendAddress);
+            lock (_operator.sendAddresses)
+            {
+                _operator.sendAddresses.Add(operatorID, sendAddress);
+            }
         }
     }
 }

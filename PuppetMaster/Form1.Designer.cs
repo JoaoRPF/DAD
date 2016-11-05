@@ -33,6 +33,7 @@
             this.execFileButton = new System.Windows.Forms.Button();
             this.execCommandButton = new System.Windows.Forms.Button();
             this.logText = new System.Windows.Forms.TextBox();
+            this.stepButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // fileText
@@ -48,7 +49,7 @@
             this.commandText.AccessibleName = "CommandText";
             this.commandText.Location = new System.Drawing.Point(12, 61);
             this.commandText.Name = "commandText";
-            this.commandText.Size = new System.Drawing.Size(433, 20);
+            this.commandText.Size = new System.Drawing.Size(280, 20);
             this.commandText.TabIndex = 1;
             // 
             // execFileButton
@@ -65,7 +66,7 @@
             // execCommandButton
             // 
             this.execCommandButton.AccessibleName = "ExecCommandButton";
-            this.execCommandButton.Location = new System.Drawing.Point(451, 60);
+            this.execCommandButton.Location = new System.Drawing.Point(315, 60);
             this.execCommandButton.Name = "execCommandButton";
             this.execCommandButton.Size = new System.Drawing.Size(112, 20);
             this.execCommandButton.TabIndex = 3;
@@ -82,11 +83,22 @@
             this.logText.Size = new System.Drawing.Size(551, 284);
             this.logText.TabIndex = 4;
             // 
+            // stepButton
+            // 
+            this.stepButton.Location = new System.Drawing.Point(451, 60);
+            this.stepButton.Name = "stepButton";
+            this.stepButton.Size = new System.Drawing.Size(112, 20);
+            this.stepButton.TabIndex = 5;
+            this.stepButton.Text = "Step";
+            this.stepButton.UseVisualStyleBackColor = true;
+            this.stepButton.Click += new System.EventHandler(this.stepButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(575, 412);
+            this.Controls.Add(this.stepButton);
             this.Controls.Add(this.logText);
             this.Controls.Add(this.execCommandButton);
             this.Controls.Add(this.execFileButton);
@@ -106,6 +118,7 @@
         private System.Windows.Forms.Button execFileButton;
         private System.Windows.Forms.Button execCommandButton;
         private System.Windows.Forms.TextBox logText;
+        private System.Windows.Forms.Button stepButton;
     }
 }
 

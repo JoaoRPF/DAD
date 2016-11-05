@@ -10,7 +10,6 @@ namespace DADSTORM
 {
     class PuppetMasterReadConfig
     {
-
         public Dictionary<string, string> readLine(string[] line)
         {
             if (line[0].Contains("OP"))

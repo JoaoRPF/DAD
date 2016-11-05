@@ -24,6 +24,8 @@ namespace DADSTORM
         public static Form1 formPuppetMaster = new Form1();
         public static TcpChannel channel = new TcpChannel(10000);
         private static Dictionary<string, string> operatorsAddresses = new Dictionary<string, string>(); //addresses by id TODOOOOO
+        private static string[] fileLines = null;
+        private static int lastLine = 0;
 
         [STAThread]
         static void Main()
@@ -52,16 +54,33 @@ namespace DADSTORM
                 "tcp://localhost:10001/PCService");
         }
 
-        public static void startReadingConfigFile(string filepath)
+        public static void startReadingConfigFile(string filepath, bool step)
         {
             PuppetMasterReadConfig readConfig = new PuppetMasterReadConfig();
 
             //TODO FileNotFound Exception
 
-            string[] lines = File.ReadAllLines(filepath);
-            for (int i = 0; i < lines.Length; i++)
+            if (fileLines == null)
             {
-                string[] line = lines[i].Split();
+                fileLines = File.ReadAllLines(filepath);
+            }
+            //string[] lines = File.ReadAllLines(filepath);
+
+            int limit = 0;
+            if (step)
+            {
+                limit = lastLine + 1;
+                if (limit > fileLines.Length) limit = fileLines.Length;
+            }
+            else
+            {
+                limit = fileLines.Length;
+            }
+
+            for (int i = lastLine; i < limit; i++)
+            {
+                lastLine++;
+                string[] line = fileLines[i].Split();
                 if (!String.IsNullOrEmpty(line[0]))
                 {
                     int cont = i + 1;
@@ -108,6 +127,36 @@ namespace DADSTORM
                                 opServices.startToProcess();
                             }
                         }
+                    }
+
+                    else if (line.Equals("INTERVAL"))
+                    {
+                        //TODO
+                    }
+
+                    else if (line.Equals("STATUS"))
+                    {
+                        //TODO
+                    }
+
+                    else if (line.Equals("CRASH"))
+                    {
+                        //TODO
+                    }
+
+                    else if (line.Equals("FREEZE"))
+                    {
+                        //TODO
+                    }
+
+                    else if (line.Equals("UNFREEZE"))
+                    {
+                        //TODO
+                    }
+
+                    else if (line.Equals("WAIT"))
+                    {
+                        //TODO
                     }
                 }
             }
