@@ -54,6 +54,12 @@ namespace DADSTORM
                 case "UNIQ":
                     _operator = new Uniq();
                     break;
+                case "FILTER":
+                    _operator = new Filter();
+                    break;
+                case "DUP":
+                    _operator = new Duplicate();
+                    break;
                 default:
                     _operator = new Operator();
                     break;
@@ -93,6 +99,11 @@ namespace DADSTORM
                 _operator.conditionValue = args[10];
                 if (args.Length > 11)
                     _operator.previousAddresses = previousAddressesToList(args[11]);
+            }
+            else if (_operator.type.Equals("DUP") || _operator.type.Equals("COUNT"))
+            {
+                if (args.Length > 9)
+                    _operator.previousAddresses = previousAddressesToList(args[9]);
             }
             /*else if (_operator.type.Equals("CUSTOM"))
             {
@@ -280,7 +291,12 @@ namespace DADSTORM
             {
                 if (_operator.outputTuples.Count != 0)
                 {
-                    string[] outputTuple = _operator.outputTuples[0];
+                    string[] outputTuple;
+                    lock (_operator.outputTuples)
+                    {
+                        outputTuple = (string[])_operator.outputTuples[0].Clone();
+                    }
+                    
                     lock (_operator.sendAddresses)
                     {
                         switch (_operator.routing)
@@ -294,12 +310,15 @@ namespace DADSTORM
                                         if (replicaID.Contains("0"))
                                         {
                                             string sendAddress = _operator.sendAddresses[replicaID];
-                                            Console.WriteLine("SEND adress -> " + sendAddress + " tuple -> " + outputTuple[0]);
+                                            //Console.WriteLine("SEND adress -> " + sendAddress + " tuple -> " + outputTuple[0]);
                                             operatorServices = (OperatorServices)Activator.GetObject(
                                                                 typeof(OperatorServices),
                                                                 sendAddress);
                                             operatorServices.exchangeTuples(outputTuple);
-                                            _operator.outputTuples.RemoveAt(0);
+                                            lock (_operator.outputTuples)
+                                            {
+                                                _operator.outputTuples.RemoveAt(0);
+                                            }
                                         }
                                     }
                                 }
@@ -316,7 +335,9 @@ namespace DADSTORM
         public void exchangeTuples(string[] tuple)
         {
             Console.WriteLine("RECIEVE tuple = " + tuple[1]);
-            _operator.inputTuples.Add(tuple);
+            lock(_operator.inputTuples){
+                _operator.inputTuples.Add(tuple);
+            }
         }
 
         public void setSendAddresses(string operatorID, string sendAddress)

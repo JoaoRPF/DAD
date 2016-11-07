@@ -54,6 +54,14 @@ namespace DADSTORM
                 "tcp://localhost:10001/PCService");
         }
 
+        public static void reset()
+        {
+            lastLine = 0;
+            operatorsAddresses.Clear();
+            fileLines = null;
+            services.resetPCS();
+    }
+
         public static void startReadingConfigFile(string filepath, bool step)
         {
             PuppetMasterReadConfig readConfig = new PuppetMasterReadConfig();

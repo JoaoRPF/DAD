@@ -51,5 +51,10 @@ namespace DADSTORM
         {
             PuppetMaster.startReadingConfigFile(fileText.Text, true);
         }
+
+        private void resetButton_Click(object sender, EventArgs e)
+        {
+            PuppetMaster.reset();
+        }
     }
 }

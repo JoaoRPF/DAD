@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Diagnostics;
 
 namespace DADSTORM
 {
-    class Uniq : Operator
+    class Duplicate : Operator
     {
-        private List<string[]> uniqTuples = new List<string[]>();
+        private List<string[]> tuples = new List<string[]>();
 
         public override void execute()
         {
-            Console.WriteLine("EXECUTE UNIQ");
+            Console.WriteLine("EXECUTE DUPLICATE");
 
             while (true)
             {
@@ -25,13 +24,9 @@ namespace DADSTORM
                         inputTuple = (string[])this.inputTuples[0].Clone();
                     }
                     Console.WriteLine("execute tuple -> " + inputTuple[0]);
-                    if (!uniqTuples.Exists(x => x[this.fieldNumber - 1].Equals(inputTuple[this.fieldNumber - 1]))) //MAIS ORGULHO
+                    lock (this.outputTuples)
                     {
-                        uniqTuples.Add(inputTuple);
-                        lock (this.outputTuples)
-                        {
-                            outputTuples.Add(inputTuple);
-                        }
+                        outputTuples.Add(inputTuple);
                     }
                     lock (this.inputTuples)
                     {

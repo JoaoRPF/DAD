@@ -13,6 +13,7 @@ namespace DADSTORM
         string changeInfo(string msg);
         string sendOperatorInfoToPCS(Dictionary<string, string> _operator);
         //string startOperator(string operatorID);
+        void resetPCS();
     }
 
     public interface PuppetMasterServices

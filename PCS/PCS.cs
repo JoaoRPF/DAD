@@ -165,7 +165,10 @@ namespace DADSTORM
             return _operator.id + " recebido pelo PCS"; ;
         }
 
-        
+        public void resetPCS()
+        {
+            PCS.operatorsDict.Clear();
+        }
     }
 
     public static class BuildPaths
