@@ -62,6 +62,9 @@ namespace DADSTORM
             string fieldNumber = "";
             string condition = "";
             string conditionValue = "";
+            string customDll = "";
+            string customClass = "";
+            string customMethod = "";
             switch (type)
             {
                 case "UNIQ":
@@ -82,6 +85,15 @@ namespace DADSTORM
                     condition = filter[1];
                     conditionValue = filter[2];
                     break;
+
+                case "CUSTOM":
+                    string[] customFilter = line[newIndex + 3].Split(',');
+                    Debug.WriteLine("LINE CUSTOM INFO ====== " + line[newIndex + 3]);
+
+                    customDll = customFilter[0];
+                    customClass = customFilter[1];
+                    customMethod = customFilter[2];
+                    break;
             }
             parsedLineDictionary.Add("OPERATOR_ID", id);
             parsedLineDictionary.Add("INPUT", input);
@@ -99,6 +111,9 @@ namespace DADSTORM
             parsedLineDictionary.Add("FIELD_NUMBER", fieldNumber);
             parsedLineDictionary.Add("CONDITION", condition);
             parsedLineDictionary.Add("CONDITION_VALUE", conditionValue);
+            parsedLineDictionary.Add("DLL", customDll);
+            parsedLineDictionary.Add("CLASS", customClass);
+            parsedLineDictionary.Add("METHOD", customMethod);
 
             return parsedLineDictionary;
         }

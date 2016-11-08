@@ -42,7 +42,10 @@ namespace DADSTORM
                             operatorsDict[key].fieldNumber + " " +
                             operatorsDict[key].condition + " " +
                             operatorsDict[key].conditionValue + " " +
-                            joinPreviousAddresses + " ";
+                            operatorsDict[key].dllCustom + " " +
+                            operatorsDict[key].classCustom + " " +
+                            operatorsDict[key].methodCustom + " " + 
+                            joinPreviousAddresses;
             
             return result;
         }
@@ -141,6 +144,9 @@ namespace DADSTORM
             _operator.condition = operatorDict["CONDITION"];
             _operator.conditionValue = operatorDict["CONDITION_VALUE"];
             _operator.status = "Stand_by";
+            _operator.dllCustom = operatorDict["DLL"];
+            _operator.classCustom = operatorDict["CLASS"];
+            _operator.methodCustom = operatorDict["METHOD"];
             
             int operatorNumber = 0;
             foreach (string address in operatorDict["ADDRESSES"].Split('$'))

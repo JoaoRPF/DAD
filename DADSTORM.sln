@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PCServices", "PCServices\PC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OperatorServices", "OperatorServices\OperatorServices.csproj", "{4127331B-7DEE-4CBF-9936-442A75544E84}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibOperator", "LibOperator\LibOperator.csproj", "{483B7BA4-049E-45D4-8615-941437825EE7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{4127331B-7DEE-4CBF-9936-442A75544E84}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4127331B-7DEE-4CBF-9936-442A75544E84}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4127331B-7DEE-4CBF-9936-442A75544E84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{483B7BA4-049E-45D4-8615-941437825EE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{483B7BA4-049E-45D4-8615-941437825EE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{483B7BA4-049E-45D4-8615-941437825EE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{483B7BA4-049E-45D4-8615-941437825EE7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -72,7 +72,6 @@ namespace DADSTORM
             {
                 fileLines = File.ReadAllLines(filepath);
             }
-            //string[] lines = File.ReadAllLines(filepath);
 
             int limit = 0;
             if (step)

@@ -28,6 +28,9 @@ namespace DADSTORM
         public int fieldNumber = -1;
         public string condition = "";
         public string conditionValue = "";
+        public string dllCustom = "";
+        public string classCustom = "";
+        public string methodCustom = "";
         public Dictionary<string, string> sendAddresses = new Dictionary<string, string>();
         public List<string> previousAddresses = new List<string>();
 
@@ -36,10 +39,6 @@ namespace DADSTORM
         public static OperatorServices operatorServices;
         public List<string[]> inputTuples = new List<string[]>();
         public List<string[]> outputTuples = new List<string[]>();
-
-        //public string dll = "";
-        //public classCustom = "";
-        //public methodCustom = "";
 
         public Operator() {}
 
@@ -59,6 +58,9 @@ namespace DADSTORM
                     break;
                 case "DUP":
                     _operator = new Duplicate();
+                    break;
+                case "CUSTOM":
+                    _operator = new Custom();
                     break;
                 default:
                     _operator = new Operator();
@@ -105,10 +107,14 @@ namespace DADSTORM
                 if (args.Length > 9)
                     _operator.previousAddresses = previousAddressesToList(args[9]);
             }
-            /*else if (_operator.type.Equals("CUSTOM"))
+            else if (_operator.type.Equals("CUSTOM"))
             {
-
-            }*/
+                _operator.dllCustom = args[9];
+                _operator.classCustom = args[10];
+                _operator.methodCustom = args[11];
+                if (args.Length > 12)
+                    _operator.previousAddresses = previousAddressesToList(args[12]);
+            }
 
             ChannelServices.RegisterChannel(channel, true);
             RemotingConfiguration.RegisterWellKnownServiceType(
@@ -194,7 +200,9 @@ namespace DADSTORM
             this.condition = _operator.condition;
             this.conditionValue = _operator.conditionValue;
             this.routing = _operator.routing;
-
+            this.dllCustom = _operator.dllCustom;
+            this.classCustom = _operator.classCustom;
+            this.methodCustom = _operator.methodCustom;
         }
 
         public void print()
@@ -229,6 +237,9 @@ namespace DADSTORM
                 cont++;
             }
             Console.WriteLine("ROUTING = " + this.routing);
+            Console.WriteLine("DLL = " + this.dllCustom);
+            Console.WriteLine("CLASS = " + this.classCustom);
+            Console.WriteLine("METHOD = " + this.methodCustom);
         }
 
         public List<string[]> readInputFromFile(string inputFilepath)

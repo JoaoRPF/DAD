@@ -34,7 +34,7 @@ namespace DADSTORM
                         {
                             outputTuples.Add(inputTuple);
                         }
-                    }
+                    }   
                         if (this.condition.Equals(">") && compare > 0)
                         {
                         lock (this.outputTuples)
