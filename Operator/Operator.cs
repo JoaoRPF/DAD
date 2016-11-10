@@ -286,7 +286,7 @@ namespace DADSTORM
             //Console.WriteLine("GENERAL OPERATOR");
             if (_operator.freeze)
             {
-                Console.WriteLine("DENTRO DO IF");
+                Console.WriteLine("Freezing...");
                 _operator.eventExecute.WaitOne();
             }
         }
@@ -394,7 +394,6 @@ namespace DADSTORM
 
         public void freezeOperator()
         {
-            Console.WriteLine("Freezing...");
             _operator.status = "Freezing";
             _operator.freeze = true;
         }
@@ -406,6 +405,13 @@ namespace DADSTORM
             _operator.freeze = false;
             _operator.eventExecute.Set();
             _operator.eventSendTuples.Set();
+        }
+
+        public void crashOperator()
+        {
+            Console.WriteLine("Crashing");
+            Thread.Sleep(2000);
+            Process.GetCurrentProcess().Kill();
         }
 
         public void setSendAddresses(string operatorID, string sendAddress)

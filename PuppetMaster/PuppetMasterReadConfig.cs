@@ -32,6 +32,14 @@ namespace DADSTORM
             {
                 return readUnfreezeOperator(line);
             }
+            if (line[0].Equals("Wait"))
+            {
+                return readWaitPuppetMaster(line);
+            }
+            if (line[0].Equals("Crash"))
+            {
+                return readCrashOperator(line);
+            }
             Dictionary<string, string> parsedLineDictionary = new Dictionary<string, string>();
             parsedLineDictionary.Add("LINE_ID", "LIXO");
             return parsedLineDictionary;
@@ -166,5 +174,23 @@ namespace DADSTORM
             parsedLineDictionary.Add("REPLICA_ID", line[2]);
             return parsedLineDictionary;
         }
+
+        private Dictionary<string, string> readWaitPuppetMaster(string[] line)
+        {
+            Dictionary<string, string> parsedLineDictionary = new Dictionary<string, string>();
+            parsedLineDictionary.Add("LINE_ID", "WAIT");
+            parsedLineDictionary.Add("TIME", line[1]);
+            return parsedLineDictionary;
+        }
+
+        private Dictionary<string, string> readCrashOperator(string[] line)
+        {
+            Dictionary<string, string> parsedLineDictionary = new Dictionary<string, string>();
+            parsedLineDictionary.Add("LINE_ID", "CRASH");
+            parsedLineDictionary.Add("OPERATOR_ID", line[1]);
+            parsedLineDictionary.Add("REPLICA_ID", line[2]);
+            return parsedLineDictionary;
+        }
+
     }
 }

@@ -138,7 +138,6 @@ namespace DADSTORM
                                 new Thread(opServices.startToProcess).Start();
                                 //opServices.startToProcess();
                                 PuppetMaster.formPuppetMaster.addNewLineToLog("DEPOIS");
-
                             }
                         }
                     }
@@ -189,12 +188,20 @@ namespace DADSTORM
 
                     else if (lineID.Equals("WAIT"))
                     {
-                        //TODO
+                        int sleepTime = Int32.Parse(lineContentDictionary["TIME"]);
+                        Thread.Sleep(sleepTime);
                     }
 
                     else if (lineID.Equals("CRASH"))
                     {
-                        //TODO
+                        string operatorID = lineContentDictionary["OPERATOR_ID"];
+                        string replicaID = lineContentDictionary["REPLICA_ID"];
+                        string keyOperator = operatorID + "-" + replicaID;
+                        PuppetMaster.formPuppetMaster.addNewLineToLog("Crashing " + keyOperator);
+                        opServices = (OperatorServices)Activator.GetObject(
+                                        typeof(OperatorServices),
+                                        operatorsAddresses[keyOperator]);
+                        new Thread(opServices.crashOperator).Start();
                     }
                 }
             }

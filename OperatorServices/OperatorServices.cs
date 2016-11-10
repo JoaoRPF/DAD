@@ -14,5 +14,6 @@ namespace DADSTORM
         void printStatus();
         void freezeOperator();
         void unfreezeOperator();
+        void crashOperator();
     }
 }
