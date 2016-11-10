@@ -40,6 +40,13 @@ namespace DADSTORM
         public List<string[]> inputTuples = new List<string[]>();
         public List<string[]> outputTuples = new List<string[]>();
 
+        public Thread executeThread;
+        public Thread sendTuplesThread;
+
+        public AutoResetEvent eventExecute = new AutoResetEvent(false);
+        public AutoResetEvent eventSendTuples = new AutoResetEvent(false);
+        public bool freeze = false;
+
         public Operator() {}
 
         static void Main(string[] args)
@@ -233,7 +240,7 @@ namespace DADSTORM
             cont = 0;
             foreach (string address in this.previousAddresses)
             {
-                Console.WriteLine("PREVIOUS " + cont + ": " + address);
+                Console.WriteLine("PREVIOUS ADDRESS " + cont + ": " + address);
                 cont++;
             }
             Console.WriteLine("ROUTING = " + this.routing);
@@ -276,18 +283,24 @@ namespace DADSTORM
 
         public virtual void execute()
         {
-            Console.WriteLine("GENERAL OPERATOR");
+            //Console.WriteLine("GENERAL OPERATOR");
+            if (_operator.freeze)
+            {
+                Console.WriteLine("DENTRO DO IF");
+                _operator.eventExecute.WaitOne();
+            }
         }
 
         public void startToProcess()
         {
+            _operator.status = "Running";
             _operator.print();
 
-            Thread executeThread = new Thread(_operator.execute);
-            executeThread.Start();
+            _operator.executeThread = new Thread(_operator.execute);
+            _operator.executeThread.Start();
 
-            Thread sendTuplesThread = new Thread(_operator.sendTuples);
-            sendTuplesThread.Start();
+            _operator.sendTuplesThread = new Thread(_operator.sendTuples);
+            _operator.sendTuplesThread.Start();
 
             foreach (string file in _operator.inputFile)
             {
@@ -300,6 +313,10 @@ namespace DADSTORM
             Console.WriteLine("sendTuples starting");
             while (true)
             {
+                if (_operator.freeze)
+                {
+                    _operator.eventSendTuples.WaitOne();
+                }
                 if (_operator.outputTuples.Count != 0)
                 {
                     string[] outputTuple;
@@ -321,7 +338,7 @@ namespace DADSTORM
                                         if (replicaID.Contains("0"))
                                         {
                                             string sendAddress = _operator.sendAddresses[replicaID];
-                                            //Console.WriteLine("SEND adress -> " + sendAddress + " tuple -> " + outputTuple[0]);
+                                            Console.WriteLine("SEND adress -> " + sendAddress + " tuple -> " + outputTuple[0]);
                                             operatorServices = (OperatorServices)Activator.GetObject(
                                                                 typeof(OperatorServices),
                                                                 sendAddress);
@@ -351,6 +368,46 @@ namespace DADSTORM
             }
         }
 
+        public void printStatus()
+        {
+            Console.WriteLine("PuppetMaster asked for status");
+            Console.WriteLine("My full ID = " + _operator.id + "-" + _operator.repID);
+            Console.WriteLine("My Address = " + _operator.myAddress);
+            Console.WriteLine("My current Status = " + _operator.status);
+            int cont = 0;
+            if (_operator.sendAddresses.Count > 0)
+                Console.WriteLine("I'm sending to the following addresses:");
+            foreach (string address in _operator.sendAddresses.Values)
+            {
+                Console.WriteLine(address);
+                cont++;
+            }
+            cont = 0;
+            if (_operator.previousAddresses.Count > 0)
+                Console.WriteLine("I'm receiving from the following addresses:");
+            foreach (string address in _operator.previousAddresses)
+            {
+                Console.WriteLine(address);
+                cont++;
+            }
+        }
+
+        public void freezeOperator()
+        {
+            Console.WriteLine("Freezing...");
+            _operator.status = "Freezing";
+            _operator.freeze = true;
+        }
+
+        public void unfreezeOperator()
+        {
+            Console.WriteLine("Unfreezing...");
+            _operator.status = "Running";
+            _operator.freeze = false;
+            _operator.eventExecute.Set();
+            _operator.eventSendTuples.Set();
+        }
+
         public void setSendAddresses(string operatorID, string sendAddress)
         {
             lock (_operator.sendAddresses)
@@ -358,5 +415,7 @@ namespace DADSTORM
                 _operator.sendAddresses.Add(operatorID, sendAddress);
             }
         }
+
+      
     }
 }

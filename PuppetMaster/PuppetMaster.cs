@@ -9,6 +9,7 @@ using System.Runtime.Remoting.Channels.Tcp;
 using System.IO;
 using System.Diagnostics;
 using System.Collections;
+using System.Threading;
 
 namespace DADSTORM
 {
@@ -36,6 +37,8 @@ namespace DADSTORM
             Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(formPuppetMaster);
+
+            
         }
 
         private static void initPuppetMasterChannel()
@@ -131,37 +134,65 @@ namespace DADSTORM
                                             typeof(OperatorServices),
                                             operatorsAddresses[replicaID]);
 
-                                opServices.startToProcess();
+                                PuppetMaster.formPuppetMaster.addNewLineToLog("ANTES");
+                                new Thread(opServices.startToProcess).Start();
+                                //opServices.startToProcess();
+                                PuppetMaster.formPuppetMaster.addNewLineToLog("DEPOIS");
+
                             }
                         }
                     }
 
-                    else if (line.Equals("INTERVAL"))
+                    else if (lineID.Equals("INTERVAL"))
+                    {
+                        
+
+                    }
+
+                    else if (lineID.Equals("STATUS"))
+                    {
+                        PuppetMaster.formPuppetMaster.addNewLineToLog("I'm sending to all operators a request for status");
+                        foreach (string operatorAddress in operatorsAddresses.Values)
+                        {
+                            PuppetMaster.formPuppetMaster.addNewLineToLog("OPERATOR ADDRESS = " + operatorAddress);
+                            opServices = (OperatorServices)Activator.GetObject(
+                                        typeof(OperatorServices),
+                                        operatorAddress);
+                            new Thread(opServices.printStatus).Start();
+                            //opServices.printStatus();
+                        }
+                    }
+
+                    else if (lineID.Equals("FREEZE"))
+                    {
+                        string operatorID = lineContentDictionary["OPERATOR_ID"];
+                        string replicaID = lineContentDictionary["REPLICA_ID"];
+                        string keyOperator = operatorID + "-" + replicaID;
+                        PuppetMaster.formPuppetMaster.addNewLineToLog("Freezing " + keyOperator);
+                        opServices = (OperatorServices)Activator.GetObject(
+                                        typeof(OperatorServices),
+                                        operatorsAddresses[keyOperator]);
+                        new Thread(opServices.freezeOperator).Start();
+                    }
+
+                    else if (lineID.Equals("UNFREEZE"))
+                    {
+                        string operatorID = lineContentDictionary["OPERATOR_ID"];
+                        string replicaID = lineContentDictionary["REPLICA_ID"];
+                        string keyOperator = operatorID + "-" + replicaID;
+                        PuppetMaster.formPuppetMaster.addNewLineToLog("Unfreezing " + keyOperator);
+                        opServices = (OperatorServices)Activator.GetObject(
+                                        typeof(OperatorServices),
+                                        operatorsAddresses[keyOperator]);
+                        new Thread(opServices.unfreezeOperator).Start();
+                    }
+
+                    else if (lineID.Equals("WAIT"))
                     {
                         //TODO
                     }
 
-                    else if (line.Equals("STATUS"))
-                    {
-                        //TODO
-                    }
-
-                    else if (line.Equals("CRASH"))
-                    {
-                        //TODO
-                    }
-
-                    else if (line.Equals("FREEZE"))
-                    {
-                        //TODO
-                    }
-
-                    else if (line.Equals("UNFREEZE"))
-                    {
-                        //TODO
-                    }
-
-                    else if (line.Equals("WAIT"))
+                    else if (lineID.Equals("CRASH"))
                     {
                         //TODO
                     }

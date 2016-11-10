@@ -11,11 +11,12 @@ namespace DADSTORM
         private int count = 0;
         public override void execute()
         {
-
             Console.WriteLine("EXECUTE COUNT");
 
             while (true)
             {
+                base.execute();
+
                 string[] inputTuple;
                 if (this.inputTuples.Count != 0)
                 {

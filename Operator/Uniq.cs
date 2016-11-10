@@ -13,10 +13,12 @@ namespace DADSTORM
 
         public override void execute()
         {
+           
             Console.WriteLine("EXECUTE UNIQ");
 
             while (true)
             {
+                base.execute();
                 string[] inputTuple;
                 if (this.inputTuples.Count != 0)
                 {

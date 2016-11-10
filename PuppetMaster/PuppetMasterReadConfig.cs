@@ -20,12 +20,25 @@ namespace DADSTORM
             {
                 return readStartOperator(line);
             }
+            if (line[0].Contains("Status"))
+            {
+                return readStatusOperator(line);
+            }
+            if (line[0].Equals("Freeze"))
+            {
+                return readFreezeOperator(line);
+            }
+            if (line[0].Equals("Unfreeze"))
+            {
+                return readUnfreezeOperator(line);
+            }
             Dictionary<string, string> parsedLineDictionary = new Dictionary<string, string>();
             parsedLineDictionary.Add("LINE_ID", "LIXO");
             return parsedLineDictionary;
         }
 
-        private Dictionary<string, string> readOperatorDefinition(string[] line) {
+        private Dictionary<string, string> readOperatorDefinition(string[] line)
+        {
             Dictionary<string, string> parsedLineDictionary = new Dictionary<string, string>();
             parsedLineDictionary.Add("LINE_ID", "OP");
             string id = line[0];
@@ -101,7 +114,8 @@ namespace DADSTORM
             parsedLineDictionary.Add("ROUTING", routing);
 
             string addresses = "";
-            foreach (string address in addressesList){
+            foreach (string address in addressesList)
+            {
                 addresses += address + "$";
             }
             addresses = addresses.Remove(addresses.Length - 1);
@@ -125,6 +139,31 @@ namespace DADSTORM
 
             string operatorID = line[1];
             parsedLineDictionary.Add("OPERATOR_ID", operatorID);
+            return parsedLineDictionary;
+        }
+
+        private Dictionary<string, string> readStatusOperator(string[] line)
+        {
+            Dictionary<string, string> parsedLineDictionary = new Dictionary<string, string>();
+            parsedLineDictionary.Add("LINE_ID", "STATUS");
+            return parsedLineDictionary;
+        }
+
+        private Dictionary<string, string> readFreezeOperator(string[] line)
+        {
+            Dictionary<string, string> parsedLineDictionary = new Dictionary<string, string>();
+            parsedLineDictionary.Add("LINE_ID", "FREEZE");
+            parsedLineDictionary.Add("OPERATOR_ID", line[1]);
+            parsedLineDictionary.Add("REPLICA_ID", line[2]);
+            return parsedLineDictionary;
+        }
+
+        private Dictionary<string, string> readUnfreezeOperator(string[] line)
+        {
+            Dictionary<string, string> parsedLineDictionary = new Dictionary<string, string>();
+            parsedLineDictionary.Add("LINE_ID", "UNFREEZE");
+            parsedLineDictionary.Add("OPERATOR_ID", line[1]);
+            parsedLineDictionary.Add("REPLICA_ID", line[2]);
             return parsedLineDictionary;
         }
     }

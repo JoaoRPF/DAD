@@ -11,5 +11,8 @@ namespace DADSTORM
         void exchangeTuples(string[] tuples);
         void setSendAddresses(string operatorID, string sendAddress);
         void startToProcess();
+        void printStatus();
+        void freezeOperator();
+        void unfreezeOperator();
     }
 }

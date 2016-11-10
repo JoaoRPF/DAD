@@ -14,6 +14,7 @@ namespace DADSTORM
 
             while (true)
             {
+                base.execute();
                 if (this.inputTuples.Count != 0)
                 {
                     string[] inputTuple;
