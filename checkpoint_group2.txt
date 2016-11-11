@@ -1,0 +1,11 @@
+Group 2 Taguspark
+
+- To start the project you should launch two projects: PuppetMaster and PCS, by clicking the Start Button in VS.
+- Then, there are two main text boxes. The first one is to write the config file (you should write name.config) and 
+then hit "Execute File" or "Step", depending on the type of executing that you want.
+- If you want, after launching the project with the config file you can manually introduce commands on the second text box.
+- There are multiple config files in the PuppetMaster/bin/Debug folder, that we used across our experiments.
+- If you close all the operator windows previously opened, then you can click "Reset" and the PuppetMaster is ready to receive
+another config file, without having to restart it via VS.
+- We think that all checkpoint features are implemented.
+

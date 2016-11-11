@@ -31,12 +31,14 @@ namespace DADSTORM
         public string dllCustom = "";
         public string classCustom = "";
         public string methodCustom = "";
+        public string loggingLevel = "";
         public Dictionary<string, string> sendAddresses = new Dictionary<string, string>();
         public List<string> previousAddresses = new List<string>();
 
-        public static TcpChannel channel;
+        public TcpChannel channel;
         public static Operator _operator;
         public static OperatorServices operatorServices;
+        public static PuppetMasterServices puppetMasterServices;
         public List<string[]> inputTuples = new List<string[]>();
         public List<string[]> outputTuples = new List<string[]>();
 
@@ -46,12 +48,13 @@ namespace DADSTORM
         public AutoResetEvent eventExecute = new AutoResetEvent(false);
         public AutoResetEvent eventSendTuples = new AutoResetEvent(false);
         public bool freeze = false;
+        public int sleepingTime = 0;
+        public bool sleepingMode = false;
 
         public Operator() {}
 
         static void Main(string[] args)
         {
-            Console.WriteLine("SIZE ARGS = " + args.Length);
             string operatorType = args[6];
             switch (operatorType){
                 case "COUNT":
@@ -76,7 +79,7 @@ namespace DADSTORM
             _operator.id = args[0];
             _operator.repID = Int32.Parse(args[1]);
             _operator.myAddress = args[2];
-            channel = new TcpChannel(getPort(_operator.myAddress));
+            _operator.channel = new TcpChannel(getPort(_operator.myAddress));
             foreach (string input in args[3].Split('$'))
             {
                 if (input.Contains(".dat"))
@@ -95,54 +98,67 @@ namespace DADSTORM
             _operator.repFact = Int32.Parse(args[5]);
             _operator.type = args[6];
             _operator.routing = args[7];
+            _operator.loggingLevel = args[8];
             if (_operator.type.Equals("UNIQ"))
             {
-                _operator.fieldNumber = Int32.Parse(args[8]);
-                if (args.Length > 9)
-                    _operator.previousAddresses = previousAddressesToList(args[9]);
+                _operator.fieldNumber = Int32.Parse(args[9]);
+                if (args.Length > 10)
+                    _operator.previousAddresses = previousAddressesToList(args[10]);
             }
             else if (_operator.type.Equals("FILTER"))
             {
-                _operator.fieldNumber = Int32.Parse(args[8]);
-                _operator.condition = args[9];
-                _operator.conditionValue = args[10];
-                if (args.Length > 11)
-                    _operator.previousAddresses = previousAddressesToList(args[11]);
-            }
-            else if (_operator.type.Equals("DUP") || _operator.type.Equals("COUNT"))
-            {
-                if (args.Length > 9)
-                    _operator.previousAddresses = previousAddressesToList(args[9]);
-            }
-            else if (_operator.type.Equals("CUSTOM"))
-            {
-                _operator.dllCustom = args[9];
-                _operator.classCustom = args[10];
-                _operator.methodCustom = args[11];
+                _operator.fieldNumber = Int32.Parse(args[9]);
+                _operator.condition = args[10];
+                _operator.conditionValue = args[11];
                 if (args.Length > 12)
                     _operator.previousAddresses = previousAddressesToList(args[12]);
             }
+            else if (_operator.type.Equals("DUP") || _operator.type.Equals("COUNT"))
+            {
+                if (args.Length > 10)
+                    _operator.previousAddresses = previousAddressesToList(args[10]);
+            }
+            else if (_operator.type.Equals("CUSTOM"))
+            {
+                _operator.dllCustom = args[10];
+                _operator.classCustom = args[11];
+                _operator.methodCustom = args[12];
+                if (args.Length > 13)
+                    _operator.previousAddresses = previousAddressesToList(args[13]);
+            }
 
-            ChannelServices.RegisterChannel(channel, true);
+            ChannelServices.RegisterChannel(_operator.channel, true);
             RemotingConfiguration.RegisterWellKnownServiceType(
                 typeof(Operator),
                 "op",
                 WellKnownObjectMode.Singleton);
 
+            //ChannelServices.UnregisterChannel(channel);
+
+            //RemotingConfiguration.GetRegisteredWellKnownServiceTypes
+
             sendAddressesToPreviousOP();
+            connectToPuppetMaster();
 
             System.Console.ReadLine(); //So para manter a janela aberta
         }
 
         private static void sendAddressesToPreviousOP()
         {
-            foreach (string address in _operator.previousAddresses)
+            try
             {
-                operatorServices = (OperatorServices)Activator.GetObject(
-                                          typeof(OperatorServices),
-                                          address);
-                string replica = _operator.id + "-" + _operator.repID;
-                operatorServices.setSendAddresses(replica, _operator.myAddress);
+                foreach (string address in _operator.previousAddresses)
+                {
+                    operatorServices = (OperatorServices)Activator.GetObject(
+                                              typeof(OperatorServices),
+                                              address);
+                    string replica = _operator.id + "-" + _operator.repID;
+                    operatorServices.setSendAddresses(replica, _operator.myAddress);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception e = " + e.Message);
             }
         }
 
@@ -183,13 +199,13 @@ namespace DADSTORM
             }
         }
 
-        private void connectToPuppetMaster()
+        private static void connectToPuppetMaster()
         {
-            PuppetMasterServices services = (PuppetMasterServices)Activator.GetObject(
+            puppetMasterServices = (PuppetMasterServices)Activator.GetObject(
                 typeof(PuppetMasterServices),
                 "tcp://localhost:10000/PuppetMasterServices");
 
-            System.Console.WriteLine(services.operatorConnected("Operator " + this.id + " with repID " + this.repID + " has started"));
+            puppetMasterServices.operatorConnected("Operator " + _operator.id + " with repID " + _operator.repID + " has started");
         }
 
         public void duplicate(Operator _operator)
@@ -210,6 +226,7 @@ namespace DADSTORM
             this.dllCustom = _operator.dllCustom;
             this.classCustom = _operator.classCustom;
             this.methodCustom = _operator.methodCustom;
+            this.loggingLevel = _operator.loggingLevel;
         }
 
         public void print()
@@ -247,6 +264,7 @@ namespace DADSTORM
             Console.WriteLine("DLL = " + this.dllCustom);
             Console.WriteLine("CLASS = " + this.classCustom);
             Console.WriteLine("METHOD = " + this.methodCustom);
+            Console.WriteLine("LOGGING LEVEL = " + this.loggingLevel);
         }
 
         public List<string[]> readInputFromFile(string inputFilepath)
@@ -288,6 +306,14 @@ namespace DADSTORM
             {
                 Console.WriteLine("Freezing...");
                 _operator.eventExecute.WaitOne();
+            }
+        }
+
+        public void checkSleeping()
+        {
+            if (_operator.sleepingMode)
+            {
+                Thread.Sleep(_operator.sleepingTime);
             }
         }
 
@@ -338,14 +364,25 @@ namespace DADSTORM
                                         if (replicaID.Contains("0"))
                                         {
                                             string sendAddress = _operator.sendAddresses[replicaID];
-                                            Console.WriteLine("SEND adress -> " + sendAddress + " tuple -> " + outputTuple[0]);
-                                            operatorServices = (OperatorServices)Activator.GetObject(
-                                                                typeof(OperatorServices),
-                                                                sendAddress);
-                                            operatorServices.exchangeTuples(outputTuple);
-                                            lock (_operator.outputTuples)
+                                            try
                                             {
-                                                _operator.outputTuples.RemoveAt(0);
+                                                operatorServices = (OperatorServices)Activator.GetObject(
+                                                                    typeof(OperatorServices),
+                                                                    sendAddress);
+                                                operatorServices.exchangeTuples(outputTuple);
+                                                Console.WriteLine("Sending to " + sendAddress + " the following tuple -> " + constructTuple(outputTuple));
+                                                if (_operator.loggingLevel.Equals("full"))
+                                                {
+                                                    new Thread(() => puppetMasterServices.addMessageToLog(constructMsgToLog(outputTuple))).Start();                                                  
+                                                }
+                                                lock (_operator.outputTuples)
+                                                {
+                                                    _operator.outputTuples.RemoveAt(0);
+                                                }
+                                            }
+                                            catch (Exception e)
+                                            {
+                                                Console.WriteLine("I think that Operator " + replicaID + " was murdered");
                                             }
                                         }
                                     }
@@ -360,9 +397,27 @@ namespace DADSTORM
             }
         }
 
+        public string constructMsgToLog(string[] tupleArray)
+        {
+            string message = "tuple " + _operator.myAddress + ", ";
+            string tuple = constructTuple(tupleArray);
+            return message + tuple;
+        }
+
+        public string constructTuple(string[] tupleArray)
+        {
+            string tuple = "";
+            foreach (string s in tupleArray)
+            {
+                tuple += s + ", ";
+            }
+            tuple = tuple.Substring(0, tuple.Length - 2);
+            return tuple;
+        }
+
         public void exchangeTuples(string[] tuple)
         {
-            Console.WriteLine("RECIEVE tuple = " + tuple[1]);
+            Console.WriteLine("Received the following tuple -> " + constructTuple(tuple));
             lock(_operator.inputTuples){
                 _operator.inputTuples.Add(tuple);
             }
@@ -410,8 +465,21 @@ namespace DADSTORM
         public void crashOperator()
         {
             Console.WriteLine("Crashing");
-            Thread.Sleep(2000);
-            Process.GetCurrentProcess().Kill();
+            try
+            {
+                Process.GetCurrentProcess().Kill();
+            }
+            catch (Exception ioe)
+            {
+                Debug.WriteLine("exp = " + ioe.Message);
+            }
+            
+        }
+
+        public void intervalOperator(int time)
+        {
+            _operator.sleepingTime = time;
+            _operator.sleepingMode = true;
         }
 
         public void setSendAddresses(string operatorID, string sendAddress)
@@ -420,8 +488,6 @@ namespace DADSTORM
             {
                 _operator.sendAddresses.Add(operatorID, sendAddress);
             }
-        }
-
-      
+        }    
     }
 }

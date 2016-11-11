@@ -11,7 +11,7 @@ namespace DADSTORM
         private int count = 0;
         public override void execute()
         {
-            Console.WriteLine("EXECUTE COUNT");
+            Console.WriteLine("Execute Count");
 
             while (true)
             {
@@ -20,13 +20,13 @@ namespace DADSTORM
                 string[] inputTuple;
                 if (this.inputTuples.Count != 0)
                 {
+                    checkSleeping();
                     lock (this.inputTuples)
                     {
                         inputTuple = (string[])this.inputTuples[0].Clone();
                     }
                     count++;
-                    Console.WriteLine("count: " + count);
-                    Console.WriteLine("execute tuple -> " + inputTuple[0]);
+                    Console.WriteLine("Number of Tuples = " + count);
                     lock (this.inputTuples)
                     {
                         inputTuples.RemoveAt(0);

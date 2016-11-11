@@ -5,7 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 using System.IO;
 
@@ -38,7 +38,7 @@ namespace DADSTORM
         public void addNewLineToLog(string line)
         {
             this.BeginInvoke((Action) (() => {
-                logText.Text += "\r\n" + line;
+                logText.AppendText("\r\n" + line);
             }));
         }
 
@@ -48,13 +48,19 @@ namespace DADSTORM
         }
 
         private void stepButton_Click(object sender, EventArgs e)
-        {
-            PuppetMaster.startReadingConfigFile(fileText.Text, true);
+        {       
+             PuppetMaster.startReadingConfigFile(fileText.Text, true);
         }
 
         private void resetButton_Click(object sender, EventArgs e)
         {
             PuppetMaster.reset();
+        }
+
+        private void execCommandButton_Click(object sender, EventArgs e)
+        {
+            PuppetMaster.executeCommand(commandText.Text);
+            commandText.ResetText();
         }
     }
 }

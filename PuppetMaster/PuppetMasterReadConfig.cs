@@ -40,6 +40,14 @@ namespace DADSTORM
             {
                 return readCrashOperator(line);
             }
+            if (line[0].Equals("Interval"))
+            {
+                return readIntervalLine(line);
+            }
+            if (line[0].Equals("LoggingLevel"))
+            {
+                return readLoggingLevel(line);
+            }
             Dictionary<string, string> parsedLineDictionary = new Dictionary<string, string>();
             parsedLineDictionary.Add("LINE_ID", "LIXO");
             return parsedLineDictionary;
@@ -189,6 +197,23 @@ namespace DADSTORM
             parsedLineDictionary.Add("LINE_ID", "CRASH");
             parsedLineDictionary.Add("OPERATOR_ID", line[1]);
             parsedLineDictionary.Add("REPLICA_ID", line[2]);
+            return parsedLineDictionary;
+        }
+
+        private Dictionary<string, string> readIntervalLine(string[] line)
+        {
+            Dictionary<string, string> parsedLineDictionary = new Dictionary<string, string>();
+            parsedLineDictionary.Add("LINE_ID", "INTERVAL");
+            parsedLineDictionary.Add("OPERATOR_ID", line[1]);
+            parsedLineDictionary.Add("TIME", line[2]);
+            return parsedLineDictionary;
+        }
+
+        private Dictionary<string, string> readLoggingLevel(string[] line)
+        {
+            Dictionary<string, string> parsedLineDictionary = new Dictionary<string, string>();
+            parsedLineDictionary.Add("LINE_ID", "LOGGING_LEVEL");
+            parsedLineDictionary.Add("TYPE", line[1]);
             return parsedLineDictionary;
         }
 

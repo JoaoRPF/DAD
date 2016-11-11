@@ -12,7 +12,8 @@ namespace DADSTORM
     {
         public override void execute()
         {
-            Console.WriteLine("EXECUTE CUSTOM");
+            Console.WriteLine("Execute Custom with the following arguments:");
+            Console.WriteLine("DLL = " + _operator.dllCustom + ", Class = " + _operator.classCustom + ", Method = " + _operator.methodCustom);
             byte[] code = File.ReadAllBytes(this.dllCustom); // carregamento da dll
             Assembly assembly = Assembly.Load(code);
             // Walk through each type in the assembly looking for our class
@@ -32,29 +33,26 @@ namespace DADSTORM
 
                             if (this.inputTuples.Count != 0)
                             {
+                                checkSleeping();
                                 string[] inputTuple;
                                 lock (this.inputTuples)
                                 {
                                     inputTuple = (string[])this.inputTuples[0].Clone();
                                 }
-                                Console.WriteLine("Dentro do count");
                                 object[] args = new object[] { inputTuple };
                                 object resultObject = type.InvokeMember(this.methodCustom,
                                   BindingFlags.Default | BindingFlags.InvokeMethod,
                                        null,
                                        ClassObj,
                                        args);
-                                Console.WriteLine("Depois da invocacao ao metodo da lib");
                                 IList<IList<string>> result = (IList<IList<string>>)resultObject;
-                                Console.WriteLine("Map call result was: ");
+                                Console.WriteLine("Result of executing Custom Operator: ");
                                 foreach (IList<string> tuple in result)
                                 {
                                     string[] outputTuple = new string[tuple.Count];
                                     tuple.CopyTo(outputTuple, 0);
                                     Console.Write("tuple: ");
-                                    foreach (string s in outputTuple)
-                                        Console.Write(s + " ,");
-                                    Console.WriteLine();
+                                    Console.WriteLine(constructTuple(outputTuple));
                                     lock (this.outputTuples)
                                     {
                                         outputTuples.Add(outputTuple);

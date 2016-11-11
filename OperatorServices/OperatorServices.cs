@@ -15,5 +15,6 @@ namespace DADSTORM
         void freezeOperator();
         void unfreezeOperator();
         void crashOperator();
+        void intervalOperator(int time);
     }
 }

@@ -95,6 +95,10 @@
       <Project>{c22f3e94-c7ec-4702-8e1b-a2c367139189}</Project>
       <Name>PCServices</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PuppetMasterServices\PuppetMasterServices.csproj">
+      <Project>{483ffa87-e64f-47d3-a8a9-2ac539d92267}</Project>
+      <Name>PuppetMasterServices</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -18,15 +18,3 @@ C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\Operator\bin\Debug\PCServices.pdb
 C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\Operator\obj\Debug\Operator.csprojResolveAssemblyReference.cache
 C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\Operator\obj\Debug\Operator.exe
 C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\Operator\obj\Debug\Operator.pdb
-C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Debug\Operator.exe.config
-C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Debug\Operator.exe
-C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Debug\Operator.pdb
-C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Debug\LibOperator.dll
-C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Debug\OperatorServices.dll
-C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Debug\PCServices.dll
-C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Debug\LibOperator.pdb
-C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Debug\OperatorServices.pdb
-C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Debug\PCServices.pdb
-C:\Users\Joao Ferreira\Desktop\DAD\Operator\obj\Debug\Operator.csprojResolveAssemblyReference.cache
-C:\Users\Joao Ferreira\Desktop\DAD\Operator\obj\Debug\Operator.exe
-C:\Users\Joao Ferreira\Desktop\DAD\Operator\obj\Debug\Operator.pdb

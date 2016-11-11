@@ -12,7 +12,7 @@ namespace DADSTORM
 
         public override void execute()
         {
-            Console.WriteLine("EXECUTE DUPLICATE");
+            Console.WriteLine("Execute Duplicate");
 
             while (true)
             {
@@ -20,11 +20,12 @@ namespace DADSTORM
                 string[] inputTuple;
                 if (this.inputTuples.Count != 0)
                 {
+                    checkSleeping();
                     lock (this.inputTuples)
                     {
                         inputTuple = (string[])this.inputTuples[0].Clone();
                     }
-                    Console.WriteLine("execute tuple -> " + inputTuple[0]);
+                    Console.WriteLine("Processing tuple -> " + constructTuple(inputTuple));
                     lock (this.outputTuples)
                     {
                         outputTuples.Add(inputTuple);

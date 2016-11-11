@@ -14,7 +14,7 @@ namespace DADSTORM
         public override void execute()
         {
            
-            Console.WriteLine("EXECUTE UNIQ");
+            Console.WriteLine("Execute Uniq");
 
             while (true)
             {
@@ -22,11 +22,12 @@ namespace DADSTORM
                 string[] inputTuple;
                 if (this.inputTuples.Count != 0)
                 {
+                    checkSleeping();
                     lock (this.inputTuples)
                     {
                         inputTuple = (string[])this.inputTuples[0].Clone();
                     }
-                    Console.WriteLine("execute tuple -> " + inputTuple[0]);
+                    Console.WriteLine("Processing tuple -> " + constructTuple(inputTuple));
                     if (!uniqTuples.Exists(x => x[this.fieldNumber - 1].Equals(inputTuple[this.fieldNumber - 1]))) //MAIS ORGULHO
                     {
                         uniqTuples.Add(inputTuple);

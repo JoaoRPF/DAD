@@ -22,4 +22,3 @@ C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\PCS\bin\Debug\Operator.pdb
 C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\PCS\bin\Debug\PCServices.pdb
 C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\PCS\bin\Debug\OperatorServices.pdb
 C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\PCS\obj\Debug\PCS.csprojResolveAssemblyReference.cache
-C:\Users\Joao Ferreira\Desktop\DAD\PCS\bin\Debug\PCS.exe.config

@@ -21,12 +21,12 @@ namespace DADSTORM
         /// </summary>
 
         public static PCServices services;
-        public static OperatorServices opServices;
         public static Form1 formPuppetMaster = new Form1();
         public static TcpChannel channel = new TcpChannel(10000);
         private static Dictionary<string, string> operatorsAddresses = new Dictionary<string, string>(); //addresses by id TODOOOOO
         private static string[] fileLines = null;
         private static int lastLine = 0;
+        private static string loggingType = "light";
 
         [STAThread]
         static void Main()
@@ -36,9 +36,7 @@ namespace DADSTORM
 
             Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(formPuppetMaster);
-
-            
+            Application.Run(formPuppetMaster);       
         }
 
         private static void initPuppetMasterChannel()
@@ -63,7 +61,91 @@ namespace DADSTORM
             operatorsAddresses.Clear();
             fileLines = null;
             services.resetPCS();
-    }
+        }
+
+        public static void executeCommand(string command)
+        {
+            try
+            {
+                if (command.Contains("Start"))
+                {
+                    string operatorID = command.Split()[1];
+
+                    foreach (string replicaID in operatorsAddresses.Keys)
+                    {
+                        if (replicaID.Contains(operatorID))
+                        {
+                            new Thread(() => doRemoteCommand(operatorsAddresses[replicaID], "START")).Start();
+                        }
+                    }
+                }
+                else if (command.Contains("Interval"))
+                {
+                    string operatorID = command.Split()[1];
+                    int time = Int32.Parse(command.Split()[2]);
+                    PuppetMaster.formPuppetMaster.addNewLineToLog("Setting an interval of " + time + "ms for " + operatorID);
+                    foreach (string replicaID in operatorsAddresses.Keys)
+                    {
+                        if (replicaID.Contains(operatorID))
+                        {
+                            new Thread(() => doRemoteCommand(operatorsAddresses[replicaID], "INTERVAL-" + time)).Start();
+                        }
+                    }
+                }
+                else if (command.Contains("Status"))
+                {
+                    PuppetMaster.formPuppetMaster.addNewLineToLog("I'm sending to all operators a request for status");
+                    foreach (string operatorAddress in operatorsAddresses.Values)
+                    {
+                        new Thread(() => doRemoteCommand(operatorAddress, "STATUS")).Start();
+                    }
+                }
+                else if (command.Contains("Freeze"))
+                {
+                    string operatorID = command.Split()[1];
+                    string replicaID = command.Split()[2];
+                    string keyOperator = operatorID + "-" + replicaID;
+                    PuppetMaster.formPuppetMaster.addNewLineToLog("Freezing " + keyOperator);
+
+                    new Thread(() => doRemoteCommand(operatorsAddresses[keyOperator], "FREEZE")).Start();
+                }
+                else if (command.Contains("Unfreeze"))
+                {
+                    string operatorID = command.Split()[1];
+                    string replicaID = command.Split()[2];
+                    string keyOperator = operatorID + "-" + replicaID;
+                    PuppetMaster.formPuppetMaster.addNewLineToLog("Unfreezing " + keyOperator);
+
+                    new Thread(() => doRemoteCommand(operatorsAddresses[keyOperator], "UNFREEZE")).Start();
+                }
+                else if (command.Contains("Wait"))
+                {
+                    int sleepTime = Int32.Parse(command.Split()[1]);
+                    PuppetMaster.formPuppetMaster.addNewLineToLog("I'm sleeping...");
+                    Thread.Sleep(sleepTime);
+                    PuppetMaster.formPuppetMaster.addNewLineToLog("I'm awake!");
+
+                }
+                else if (command.Contains("Crash"))
+                {
+                    string operatorID = command.Split()[1];
+                    string replicaID = command.Split()[2];
+                    string keyOperator = operatorID + "-" + replicaID;
+                    PuppetMaster.formPuppetMaster.addNewLineToLog("Crashing " + keyOperator);
+
+                    new Thread(() => doRemoteCommand(operatorsAddresses[keyOperator], "CRASH")).Start();
+
+                }
+                else
+                {
+                    PuppetMaster.formPuppetMaster.addNewLineToLog("Invalid Command -> " + command);
+                }
+            }
+            catch (Exception e)
+            {
+                PuppetMaster.formPuppetMaster.addNewLineToLog("Invalid Command -> " + command);
+            }
+        }
 
         public static void startReadingConfigFile(string filepath, bool step)
         {
@@ -73,7 +155,15 @@ namespace DADSTORM
 
             if (fileLines == null)
             {
-                fileLines = File.ReadAllLines(filepath);
+                try
+                {
+                    fileLines = File.ReadAllLines(filepath);
+                }
+                catch (FileNotFoundException e)
+                {
+                    PuppetMaster.formPuppetMaster.addNewLineToLog("File not found");
+                    return;
+                }
             }
 
             int limit = 0;
@@ -87,6 +177,7 @@ namespace DADSTORM
                 limit = fileLines.Length;
             }
 
+          
             for (int i = lastLine; i < limit; i++)
             {
                 lastLine++;
@@ -94,16 +185,22 @@ namespace DADSTORM
                 if (!String.IsNullOrEmpty(line[0]))
                 {
                     int cont = i + 1;
-                    Debug.WriteLine("line "  + cont + "=" + line[0]);
+                    Debug.WriteLine("line " + cont + "=" + line[0]);
                     Dictionary<string, string> lineContentDictionary = readConfig.readLine(line);
                     string lineID = lineContentDictionary["LINE_ID"];
                     Debug.WriteLine("lineID = " + lineID);
+
+                    if (lineID.Equals("LOGGING_LEVEL"))
+                    {
+                        PuppetMaster.formPuppetMaster.addNewLineToLog("Logging Level set to " + lineContentDictionary["TYPE"]);
+                        loggingType = lineContentDictionary["TYPE"];
+                    }
 
                     if (lineID.Equals("OP"))
                     {
                         int replicaCount = 0;
                         string operatorID = lineContentDictionary["OPERATOR_ID"];
-                        foreach(string address in lineContentDictionary["ADDRESSES"].Split('$'))
+                        foreach (string address in lineContentDictionary["ADDRESSES"].Split('$'))
                         {
                             string replicaID = operatorID + "-" + replicaCount;
                             operatorsAddresses.Add(replicaID, address);
@@ -116,35 +213,34 @@ namespace DADSTORM
                             PuppetMaster.formPuppetMaster.addNewLineToLog(key + " = " + value);
                         }
                         PuppetMaster.formPuppetMaster.addNewLineToLog("\r\n");
+                        lineContentDictionary["LOGGING_LEVEL"] = loggingType;
                         services.sendOperatorInfoToPCS(lineContentDictionary);
                     }
 
                     else if (lineID.Equals("START"))
                     {
                         string operatorID = lineContentDictionary["OPERATOR_ID"];
-                        PuppetMaster.formPuppetMaster.addNewLineToLog("PCS is about to start: " + operatorID);
-
                         foreach (string replicaID in operatorsAddresses.Keys)
                         {
                             if (replicaID.Contains(operatorID))
                             {
-                                Debug.WriteLine("REPLICA ADDRESS = " + operatorsAddresses[replicaID]);
-                                PuppetMaster.formPuppetMaster.addNewLineToLog("REPLICA ADDRESS = " + operatorsAddresses[replicaID]);
-                                opServices = (OperatorServices)Activator.GetObject(
-                                            typeof(OperatorServices),
-                                            operatorsAddresses[replicaID]);
-
-                                PuppetMaster.formPuppetMaster.addNewLineToLog("ANTES");
-                                new Thread(opServices.startToProcess).Start();
-                                //opServices.startToProcess();
-                                PuppetMaster.formPuppetMaster.addNewLineToLog("DEPOIS");
+                                new Thread(() => doRemoteCommand(operatorsAddresses[replicaID], "START")).Start();
                             }
                         }
                     }
 
                     else if (lineID.Equals("INTERVAL"))
                     {
-                        
+                        string operatorID = lineContentDictionary["OPERATOR_ID"];
+                        int time = Int32.Parse(lineContentDictionary["TIME"]);
+                        PuppetMaster.formPuppetMaster.addNewLineToLog("Setting an interval of " + time + "ms for " + operatorID);
+                        foreach (string replicaID in operatorsAddresses.Keys)
+                        {
+                            if (replicaID.Contains(operatorID))
+                            {
+                                new Thread(() => doRemoteCommand(operatorsAddresses[replicaID], "INTERVAL-"+time)).Start();
+                            }
+                        }
 
                     }
 
@@ -154,11 +250,9 @@ namespace DADSTORM
                         foreach (string operatorAddress in operatorsAddresses.Values)
                         {
                             PuppetMaster.formPuppetMaster.addNewLineToLog("OPERATOR ADDRESS = " + operatorAddress);
-                            opServices = (OperatorServices)Activator.GetObject(
-                                        typeof(OperatorServices),
-                                        operatorAddress);
-                            new Thread(opServices.printStatus).Start();
-                            //opServices.printStatus();
+                           
+                            new Thread(() => doRemoteCommand(operatorAddress, "STATUS")).Start();
+                                               
                         }
                     }
 
@@ -168,10 +262,8 @@ namespace DADSTORM
                         string replicaID = lineContentDictionary["REPLICA_ID"];
                         string keyOperator = operatorID + "-" + replicaID;
                         PuppetMaster.formPuppetMaster.addNewLineToLog("Freezing " + keyOperator);
-                        opServices = (OperatorServices)Activator.GetObject(
-                                        typeof(OperatorServices),
-                                        operatorsAddresses[keyOperator]);
-                        new Thread(opServices.freezeOperator).Start();
+                       
+                        new Thread(() => doRemoteCommand(operatorsAddresses[keyOperator], "FREEZE")).Start();
                     }
 
                     else if (lineID.Equals("UNFREEZE"))
@@ -180,10 +272,8 @@ namespace DADSTORM
                         string replicaID = lineContentDictionary["REPLICA_ID"];
                         string keyOperator = operatorID + "-" + replicaID;
                         PuppetMaster.formPuppetMaster.addNewLineToLog("Unfreezing " + keyOperator);
-                        opServices = (OperatorServices)Activator.GetObject(
-                                        typeof(OperatorServices),
-                                        operatorsAddresses[keyOperator]);
-                        new Thread(opServices.unfreezeOperator).Start();
+
+                        new Thread(() => doRemoteCommand(operatorsAddresses[keyOperator], "UNFREEZE")).Start();
                     }
 
                     else if (lineID.Equals("WAIT"))
@@ -198,22 +288,69 @@ namespace DADSTORM
                         string replicaID = lineContentDictionary["REPLICA_ID"];
                         string keyOperator = operatorID + "-" + replicaID;
                         PuppetMaster.formPuppetMaster.addNewLineToLog("Crashing " + keyOperator);
-                        opServices = (OperatorServices)Activator.GetObject(
-                                        typeof(OperatorServices),
-                                        operatorsAddresses[keyOperator]);
-                        new Thread(opServices.crashOperator).Start();
+                        new Thread(() => doRemoteCommand(operatorsAddresses[keyOperator], "CRASH")).Start();
                     }
                 }
+            }
+        }
+
+        private static void doRemoteCommand(string address, string command)
+        {
+            try
+            {
+                OperatorServices opServicesRemote = (OperatorServices)Activator.GetObject(
+                                        typeof(OperatorServices),
+                                        address);
+                int time = 0;
+                if (command.Contains("INTERVAL"))
+                {
+                    string[] infos = command.Split('-');
+                    command = infos[0];
+                    time = Int32.Parse(infos[1]);
+                }
+                switch (command)
+                {
+                    case "START":
+                        opServicesRemote.startToProcess();
+                        break;
+                    case "INTERVAL":
+                        opServicesRemote.intervalOperator(time);
+                        break;
+                    case "FREEZE":
+                        opServicesRemote.freezeOperator();
+                        break;
+                    case "UNFREEZE":
+                        opServicesRemote.unfreezeOperator();
+                        break;
+                    case "STATUS":
+                        opServicesRemote.printStatus();
+                        break;
+                    case "CRASH":
+                        opServicesRemote.crashOperator();
+                        break;
+                    default:
+                        break;
+                }
+                
+            }
+            catch (Exception e)
+            {
+                PuppetMaster.formPuppetMaster.addNewLineToLog("I think that Operator in " + address + " was murdered");
             }
         }
     }
 
     class PuppetMasterServicesClass: MarshalByRefObject, PuppetMasterServices
     {
-        public string operatorConnected (String msgFromOperator)
+        public string operatorConnected (string msgFromOperator)
         {       
             PuppetMaster.formPuppetMaster.addNewLineToLog("Msg from Operator: " + msgFromOperator);
             return msgFromOperator;
+        }
+
+        public void addMessageToLog(string message)
+        {
+            PuppetMaster.formPuppetMaster.addNewLineToLog(message);
         }
     }
 }

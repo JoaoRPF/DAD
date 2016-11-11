@@ -15,9 +15,4 @@ namespace DADSTORM
         //string startOperator(string operatorID);
         void resetPCS();
     }
-
-    public interface PuppetMasterServices
-    {
-        string operatorConnected(string name);
-    }
 }

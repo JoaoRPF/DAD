@@ -73,14 +73,17 @@
             this.execCommandButton.TabIndex = 3;
             this.execCommandButton.Text = "Execute Command";
             this.execCommandButton.UseVisualStyleBackColor = true;
+            this.execCommandButton.Click += new System.EventHandler(this.execCommandButton_Click);
             // 
             // logText
             // 
+            this.logText.AcceptsReturn = true;
             this.logText.AccessibleName = "LogText";
             this.logText.Location = new System.Drawing.Point(12, 98);
             this.logText.Multiline = true;
             this.logText.Name = "logText";
             this.logText.ReadOnly = true;
+            this.logText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.logText.Size = new System.Drawing.Size(551, 284);
             this.logText.TabIndex = 4;
             // 

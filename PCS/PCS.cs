@@ -39,6 +39,7 @@ namespace DADSTORM
                             operatorsDict[key].repFact + " " +
                             operatorsDict[key].type + " " +
                             operatorsDict[key].routing + " " +
+                            operatorsDict[key].loggingLevel + " " +
                             operatorsDict[key].fieldNumber + " " +
                             operatorsDict[key].condition + " " +
                             operatorsDict[key].conditionValue + " " +
@@ -137,6 +138,7 @@ namespace DADSTORM
             _operator.input = operatorDict["INPUT"];
             _operator.repFact = Int32.Parse(operatorDict["REP_FACT"]);
             _operator.routing = operatorDict["ROUTING"];
+            _operator.loggingLevel = operatorDict["LOGGING_LEVEL"];
             if (operatorDict["FIELD_NUMBER"] != "")
             {
                 _operator.fieldNumber = Int32.Parse(operatorDict["FIELD_NUMBER"]);
