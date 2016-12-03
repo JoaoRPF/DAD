@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DADSTORM
+namespace DADStorm
 {
-    public class OutputOperator
+    public class OutputOperator : IOperator
     {
         public IList<IList<string>> CustomOperation(IList<string> l)
         {

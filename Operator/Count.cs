@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DADSTORM
+namespace DADStorm
 {
     class Count : Operator 
     {
@@ -27,6 +27,10 @@ namespace DADSTORM
                     }
                     count++;
                     Console.WriteLine("Number of Tuples = " + count);
+                    lock (this.outputTuples)
+                    {
+                        outputTuples.Add(new string[] {count.ToString()});
+                    }
                     lock (this.inputTuples)
                     {
                         inputTuples.RemoveAt(0);

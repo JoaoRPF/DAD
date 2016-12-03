@@ -1,0 +1,4 @@
+C:\Users\Joao Ferreira\Desktop\DAD\PCServices\bin\Release\PCServices.dll
+C:\Users\Joao Ferreira\Desktop\DAD\PCServices\bin\Release\PCServices.pdb
+C:\Users\Joao Ferreira\Desktop\DAD\PCServices\obj\Release\PCServices.dll
+C:\Users\Joao Ferreira\Desktop\DAD\PCServices\obj\Release\PCServices.pdb

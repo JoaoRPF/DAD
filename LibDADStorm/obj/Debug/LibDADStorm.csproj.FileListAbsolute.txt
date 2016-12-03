@@ -1,0 +1,4 @@
+C:\Users\Joao Ferreira\Desktop\DAD\LibDADStorm\bin\Debug\LibDADStorm.dll
+C:\Users\Joao Ferreira\Desktop\DAD\LibDADStorm\bin\Debug\LibDADStorm.pdb
+C:\Users\Joao Ferreira\Desktop\DAD\LibDADStorm\obj\Debug\LibDADStorm.dll
+C:\Users\Joao Ferreira\Desktop\DAD\LibDADStorm\obj\Debug\LibDADStorm.pdb

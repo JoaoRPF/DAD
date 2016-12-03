@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
 
-namespace DADSTORM
+namespace DADStorm
 {
     class PuppetMasterReadConfig
     {
@@ -47,6 +47,10 @@ namespace DADSTORM
             if (line[0].Equals("LoggingLevel"))
             {
                 return readLoggingLevel(line);
+            }
+            if (line[0].Equals("Semantics"))
+            {
+                return readSemantics(line);
             }
             Dictionary<string, string> parsedLineDictionary = new Dictionary<string, string>();
             parsedLineDictionary.Add("LINE_ID", "LIXO");
@@ -217,5 +221,12 @@ namespace DADSTORM
             return parsedLineDictionary;
         }
 
+        private Dictionary<string, string> readSemantics(string[] line)
+        {
+            Dictionary<string, string> parsedLineDictionary = new Dictionary<string, string>();
+            parsedLineDictionary.Add("LINE_ID", "SEMANTICS");
+            parsedLineDictionary.Add("TYPE", line[1]);
+            return parsedLineDictionary;
+        }
     }
 }

@@ -11,7 +11,7 @@ using System.Diagnostics;
 using System.Collections;
 using System.Threading;
 
-namespace DADSTORM
+namespace DADStorm
 {
 
     class PuppetMaster
@@ -27,6 +27,7 @@ namespace DADSTORM
         private static string[] fileLines = null;
         private static int lastLine = 0;
         private static string loggingType = "light";
+        private static string semantics = "";
 
         [STAThread]
         static void Main()
@@ -196,6 +197,12 @@ namespace DADSTORM
                         loggingType = lineContentDictionary["TYPE"];
                     }
 
+                    if (lineID.Equals("SEMANTICS"))
+                    {
+                        PuppetMaster.formPuppetMaster.addNewLineToLog("Semantics set to " + lineContentDictionary["TYPE"]);
+                        semantics = lineContentDictionary["TYPE"];
+                    }
+
                     if (lineID.Equals("OP"))
                     {
                         int replicaCount = 0;
@@ -214,6 +221,7 @@ namespace DADSTORM
                         }
                         PuppetMaster.formPuppetMaster.addNewLineToLog("\r\n");
                         lineContentDictionary["LOGGING_LEVEL"] = loggingType;
+                        lineContentDictionary["SEMANTICS"] = semantics;
                         services.sendOperatorInfoToPCS(lineContentDictionary);
                     }
 

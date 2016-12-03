@@ -9,9 +9,9 @@ using System.Threading;
 using System.Windows.Forms;
 using System.IO;
 
-using DADSTORM;
+using DADStorm;
 
-namespace DADSTORM
+namespace DADStorm
 {
     public partial class Form1 : Form
     {

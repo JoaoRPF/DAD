@@ -51,9 +51,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LibOperator\LibOperator.csproj">
-      <Project>{483b7ba4-049e-45d4-8615-941437825ee7}</Project>
-      <Name>LibOperator</Name>
+    <ProjectReference Include="..\LibDADStorm\LibDADStorm.csproj">
+      <Project>{83b6a11e-da58-4986-81b6-a85c6cb57426}</Project>
+      <Name>LibDADStorm</Name>
     </ProjectReference>
     <ProjectReference Include="..\Operator\Operator.csproj">
       <Project>{d60356da-371f-40c0-a7cc-0f4f3665fd5a}</Project>

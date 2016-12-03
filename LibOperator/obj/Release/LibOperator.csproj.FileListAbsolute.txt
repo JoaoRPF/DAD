@@ -1,0 +1,4 @@
+C:\Users\Joao Ferreira\Desktop\DAD\LibOperator\bin\Release\LibOperator.dll
+C:\Users\Joao Ferreira\Desktop\DAD\LibOperator\bin\Release\LibOperator.pdb
+C:\Users\Joao Ferreira\Desktop\DAD\LibOperator\obj\Release\LibOperator.dll
+C:\Users\Joao Ferreira\Desktop\DAD\LibOperator\obj\Release\LibOperator.pdb

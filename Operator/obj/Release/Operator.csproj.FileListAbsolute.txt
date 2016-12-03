@@ -1,0 +1,14 @@
+C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Release\Operator.exe.config
+C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Release\Operator.exe
+C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Release\Operator.pdb
+C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Release\LibOperator.dll
+C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Release\OperatorServices.dll
+C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Release\PCServices.dll
+C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Release\PuppetMasterServices.dll
+C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Release\LibOperator.pdb
+C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Release\OperatorServices.pdb
+C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Release\PCServices.pdb
+C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Release\PuppetMasterServices.pdb
+C:\Users\Joao Ferreira\Desktop\DAD\Operator\obj\Release\Operator.csprojResolveAssemblyReference.cache
+C:\Users\Joao Ferreira\Desktop\DAD\Operator\obj\Release\Operator.exe
+C:\Users\Joao Ferreira\Desktop\DAD\Operator\obj\Release\Operator.pdb

@@ -1,0 +1,4 @@
+C:\Users\Joao Ferreira\Desktop\DAD\OperatorServices\bin\Release\OperatorServices.dll
+C:\Users\Joao Ferreira\Desktop\DAD\OperatorServices\bin\Release\OperatorServices.pdb
+C:\Users\Joao Ferreira\Desktop\DAD\OperatorServices\obj\Release\OperatorServices.dll
+C:\Users\Joao Ferreira\Desktop\DAD\OperatorServices\obj\Release\OperatorServices.pdb

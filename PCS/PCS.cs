@@ -10,7 +10,7 @@ using System.Threading;
 using System.IO;
 using System.Diagnostics;
 
-namespace DADSTORM
+namespace DADStorm
 {
     static class PCS
     {
@@ -40,6 +40,7 @@ namespace DADSTORM
                             operatorsDict[key].type + " " +
                             operatorsDict[key].routing + " " +
                             operatorsDict[key].loggingLevel + " " +
+                            operatorsDict[key].semantics + " " + 
                             operatorsDict[key].fieldNumber + " " +
                             operatorsDict[key].condition + " " +
                             operatorsDict[key].conditionValue + " " +
@@ -139,6 +140,7 @@ namespace DADSTORM
             _operator.repFact = Int32.Parse(operatorDict["REP_FACT"]);
             _operator.routing = operatorDict["ROUTING"];
             _operator.loggingLevel = operatorDict["LOGGING_LEVEL"];
+            _operator.semantics = operatorDict["SEMANTICS"];
             if (operatorDict["FIELD_NUMBER"] != "")
             {
                 _operator.fieldNumber = Int32.Parse(operatorDict["FIELD_NUMBER"]);

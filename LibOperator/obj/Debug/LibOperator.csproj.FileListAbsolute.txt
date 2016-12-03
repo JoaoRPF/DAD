@@ -1,0 +1,7 @@
+C:\Users\Joao Ferreira\Desktop\DAD\LibOperator\bin\Debug\LibOperator.dll
+C:\Users\Joao Ferreira\Desktop\DAD\LibOperator\bin\Debug\LibOperator.pdb
+C:\Users\Joao Ferreira\Desktop\DAD\LibOperator\bin\Debug\LibDADStorm.dll
+C:\Users\Joao Ferreira\Desktop\DAD\LibOperator\bin\Debug\LibDADStorm.pdb
+C:\Users\Joao Ferreira\Desktop\DAD\LibOperator\obj\Debug\LibOperator.csprojResolveAssemblyReference.cache
+C:\Users\Joao Ferreira\Desktop\DAD\LibOperator\obj\Debug\LibOperator.dll
+C:\Users\Joao Ferreira\Desktop\DAD\LibOperator\obj\Debug\LibOperator.pdb

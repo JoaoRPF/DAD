@@ -1,0 +1,4 @@
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMasterServices\bin\Release\PuppetMasterServices.dll
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMasterServices\bin\Release\PuppetMasterServices.pdb
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMasterServices\obj\Release\PuppetMasterServices.dll
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMasterServices\obj\Release\PuppetMasterServices.pdb

@@ -8,3 +8,7 @@ C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\PCServices\bin\Debug\PCServices.pdb
 C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\PCServices\obj\Debug\PCServices.csprojResolveAssemblyReference.cache
 C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\PCServices\obj\Debug\PCServices.dll
 C:\Users\lagarto\Desktop\ist\DAD_PROJ\DAD\PCServices\obj\Debug\PCServices.pdb
+C:\Users\Joao Ferreira\Desktop\DAD\PCServices\bin\Debug\PCServices.dll
+C:\Users\Joao Ferreira\Desktop\DAD\PCServices\bin\Debug\PCServices.pdb
+C:\Users\Joao Ferreira\Desktop\DAD\PCServices\obj\Debug\PCServices.dll
+C:\Users\Joao Ferreira\Desktop\DAD\PCServices\obj\Debug\PCServices.pdb

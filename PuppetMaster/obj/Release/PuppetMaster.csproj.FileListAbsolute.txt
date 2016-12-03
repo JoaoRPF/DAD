@@ -1,0 +1,17 @@
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\bin\Release\PuppetMaster.exe.config
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\bin\Release\PuppetMaster.exe
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\bin\Release\PuppetMaster.pdb
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\bin\Release\Operator.exe
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\bin\Release\OperatorServices.dll
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\bin\Release\PCServices.dll
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\bin\Release\PuppetMasterServices.dll
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\bin\Release\OperatorServices.pdb
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\bin\Release\Operator.pdb
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\bin\Release\PCServices.pdb
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\bin\Release\PuppetMasterServices.pdb
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\obj\Release\PuppetMaster.csprojResolveAssemblyReference.cache
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\obj\Release\DADSTORM.Form1.resources
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\obj\Release\PuppetMaster.Properties.Resources.resources
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\obj\Release\PuppetMaster.csproj.GenerateResource.Cache
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\obj\Release\PuppetMaster.exe
+C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\obj\Release\PuppetMaster.pdb

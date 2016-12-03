@@ -44,21 +44,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AtMostOnce.cs" />
     <Compile Include="Count.cs" />
     <Compile Include="Custom.cs" />
     <Compile Include="Duplicate.cs" />
     <Compile Include="Filter.cs" />
     <Compile Include="Operator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DadStormTimeOutException.cs" />
     <Compile Include="Uniq.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LibOperator\LibOperator.csproj">
-      <Project>{483b7ba4-049e-45d4-8615-941437825ee7}</Project>
-      <Name>LibOperator</Name>
+    <ProjectReference Include="..\LibDADStorm\LibDADStorm.csproj">
+      <Project>{83b6a11e-da58-4986-81b6-a85c6cb57426}</Project>
+      <Name>LibDADStorm</Name>
     </ProjectReference>
     <ProjectReference Include="..\OperatorServices\OperatorServices.csproj">
       <Project>{4127331b-7dee-4cbf-9936-442a75544e84}</Project>
