@@ -333,6 +333,8 @@ namespace DADStorm
 
         public void startToProcess()
         {
+            _operator.initAliveReplicas();
+
             _operator.status = "Running";
             _operator.print();
 
@@ -349,10 +351,8 @@ namespace DADStorm
 
             if (_operator.routing.Equals("primary"))
             {
-                _operator.initPrimaryReplicasDict();
+                //_operator.initPrimaryReplicasDict();
             }
-
-            _operator.initAliveReplicas();
         }
 
         public void sendTuples()
@@ -371,7 +371,7 @@ namespace DADStorm
                     {
                         outputTuple = (string[])_operator.outputTuples[0].Clone();
                     }
-                    
+
                     lock (_operator.sendAddresses)
                     {
                         string routing = _operator.routing;
@@ -382,223 +382,84 @@ namespace DADStorm
                             fieldNumberHashing = Int32.Parse(_operator.routing.Split('(')[1].Split(')')[0]);
 
                         }
-                        switch (routing)
+                        bool receivedAnswer = true;
+                        if (_operator.sendAddresses.Count != 0)
                         {
-                            case "primary":
-                                bool receivedAnswer = true;
-                                if (_operator.sendAddresses.Count != 0)
+                            List<string> savedReplicaIDs = new List<string>();
+                            foreach (string operatorID in aliveReplicas.Keys)
+                            {
+                                int limit = aliveReplicas[operatorID].Count;
+                                int replicaIndex = -1;
+                                switch (routing)
                                 {
-                                    List<string> savedReplicaIDs = new List<string>();
-                                    foreach (string replicaID in _operator.sendAddresses.Keys)
-                                    {
-                                        int replicaToSendPrimary = dictionaryPrimaryReplica[replicaID.Split('-')[0]];
-                                        if (replicaID.Contains("-" + replicaToSendPrimary.ToString()))
-                                        {
-                                            string sendAddress = _operator.sendAddresses[replicaID];
-                                            try
-                                            {
-                                                operatorServices = (OperatorServices)Activator.GetObject(
-                                                                    typeof(OperatorServices),
-                                                                    sendAddress);
-                                                Console.WriteLine("Sending to " + sendAddress + " the following tuple -> " + constructTuple(outputTuple));
-                                                var task = Task.Run(() => operatorServices.exchangeTuples(outputTuple));
-                                                if (task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
-                                                {
-                                                    contador++;
-                                                    Console.WriteLine("Received Answer " + contador);
-                                                }
-                                                else
-                                                {
-                                                    Console.WriteLine("Did not received answer");
-                                                    savedReplicaIDs.Add(replicaID);
-                                                    receivedAnswer = false;
-                                                    throw new DadStormTimeOutException();
-                                                }
-                                                //operatorServices.exchangeTuples(outputTuple);
-                                                if (_operator.loggingLevel.Equals("full"))
-                                                {
-                                                    new Thread(() => puppetMasterServices.addMessageToLog(constructMsgToLog(outputTuple))).Start();                                                  
-                                                }
-                                            }
-                                            catch (System.Net.Sockets.SocketException e) //Operator crashou
-                                            {
-                                                Console.WriteLine("I think that Operator " + replicaID + " crashed. SocketException");
-                                            }
-                                            catch (DadStormTimeOutException e)
-                                            {
-                                                Console.WriteLine("I think that Operator " + replicaID + " crashed. TimeOutException");
-                                            }
-
-                                            catch (Exception e)
-                                            {
-                                                Console.WriteLine("I think that Operator " + replicaID + " crashed. General Exception");
-                                            }
-                                        }
-                                    }
-                                    foreach (string savedReplicaID in savedReplicaIDs)
-                                    {
-                                        string failedOperator = savedReplicaID.Split('-')[0];
-                                        dictionaryPrimaryReplica[failedOperator]++;
-                                        Dictionary<string, int> dictNumberReplicas = getNumberOfReplicas();
-                                        int numberOfReplicas = dictNumberReplicas[failedOperator];
-                                        if (dictionaryPrimaryReplica[failedOperator] >= numberOfReplicas)
-                                        {
-                                            dictionaryPrimaryReplica[failedOperator] = 0;
-                                        }
-                                    }
-                                    if (_operator.semantics.Equals("at-most-once") || 
-                                        _operator.semantics.Equals("at-least-once") && (receivedAnswer))
-                                    {
-                                        lock (_operator.outputTuples)
-                                        {
-                                            _operator.outputTuples.RemoveAt(0);
-                                        }
-                                    }
-                                    receivedAnswer = false;
-                                }
-                                break;
-
-                            case "random":
-                                bool receivedAnswerRandom = true;
-                                if (_operator.sendAddresses.Count != 0)
-                                {
-                                    List<string> savedReplicaIDs = new List<string>();
-                                    foreach (string operatorID in aliveReplicas.Keys)
-                                    {
-                                        int limit = aliveReplicas[operatorID].Count;
+                                    case "primary":
+                                        replicaIndex = 0; //Always the first available replica of each operator
+                                        break;
+                                    case "random":
                                         Random random = new Random();
-                                        int rand = random.Next(0, limit);
-                                        int id = aliveReplicas[operatorID][rand];
-                                        string replicaID = operatorID + "-" + id;
-                                        string sendAddress = _operator.sendAddresses[replicaID];
-                                        try
-                                        {
-                                            operatorServices = (OperatorServices)Activator.GetObject(
-                                                                typeof(OperatorServices),
-                                                                sendAddress);                                            
-                                            Console.WriteLine("Sending to " + sendAddress + " the following tuple -> " + constructTuple(outputTuple));
-                                            var task = Task.Run(() => operatorServices.exchangeTuples(outputTuple));
-                                            if (task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
-                                            {
-                                                contador++; // SAIR
-                                                Console.WriteLine("Received Answer " + contador);
-                                            }
-                                            else
-                                            {
-                                                Console.WriteLine("Did not received answer");
-                                                savedReplicaIDs.Add(replicaID);
-                                                receivedAnswerRandom = false;
-                                                throw new DadStormTimeOutException();
-                                            }
-                                            if (_operator.loggingLevel.Equals("full"))
-                                            {
-                                                new Thread(() => puppetMasterServices.addMessageToLog(constructMsgToLog(outputTuple))).Start();
-                                            }
-                                        }
-                                        catch (System.Net.Sockets.SocketException e) //Operator crashou
-                                        {
-                                            Console.WriteLine("I think that Operator " + replicaID + " crashed. SocketException");
-                                        }
-                                        catch (DadStormTimeOutException e)
-                                        {
-                                            Console.WriteLine("I think that Operator " + replicaID + " crashed. TimeOutException");
-                                        }
-
-                                        catch (Exception e)
-                                        {
-                                            Console.WriteLine("I think that Operator " + replicaID + " crashed. General Exception");
-                                        }
-                                    }
-                                    foreach (string savedReplicaID in savedReplicaIDs)
-                                    {
-                                        string failedOperator = savedReplicaID.Split('-')[0];
-                                        int failedReplicaID = Int32.Parse(savedReplicaID.Split('-')[1]);
-                                        aliveReplicas[failedOperator].Remove(failedReplicaID);
-                                    }
-
-                                    if (_operator.semantics.Equals("at-most-once") ||
-                                        _operator.semantics.Equals("at-least-once") && (receivedAnswerRandom))
-                                    {
-                                        lock (_operator.outputTuples)
-                                        {
-                                            _operator.outputTuples.RemoveAt(0);
-                                        }
-                                    }
-                                    receivedAnswerRandom = false;
+                                        replicaIndex = random.Next(0, limit);
+                                        break;
+                                    case "hashing":
+                                        replicaIndex = getHashValue(outputTuple, limit, fieldNumberHashing);
+                                        break;
                                 }
-                                break;
-
-                            case "hashing":
-                                bool receivedAnswerHashing = true;
-                                if (_operator.sendAddresses.Count != 0)
+                                int id = aliveReplicas[operatorID][replicaIndex];
+                                string replicaID = operatorID + "-" + id;
+                                string sendAddress = _operator.sendAddresses[replicaID];
+                                try
                                 {
-                                    List<string> savedReplicaIDs = new List<string>();
-                                    foreach (string operatorID in aliveReplicas.Keys)
+                                    operatorServices = (OperatorServices)Activator.GetObject(
+                                                        typeof(OperatorServices),
+                                                        sendAddress);
+                                    Console.WriteLine("Sending to " + sendAddress + " the following tuple -> " + constructTuple(outputTuple));
+                                    var task = Task.Run(() => operatorServices.exchangeTuples(outputTuple));
+                                    if (task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
                                     {
-                                        int limit = aliveReplicas[operatorID].Count;
-                                        int positionReplica = getHashValue(outputTuple, limit, fieldNumberHashing);
-                                        int id = aliveReplicas[operatorID][positionReplica];
-                                        string replicaID = operatorID + "-" + id;
-                                        string sendAddress = _operator.sendAddresses[replicaID];
-                                        try
-                                        {
-                                            operatorServices = (OperatorServices)Activator.GetObject(
-                                                                typeof(OperatorServices),
-                                                                sendAddress);
-                                            Console.WriteLine("Sending to " + sendAddress + " the following tuple -> " + constructTuple(outputTuple));
-                                            var task = Task.Run(() => operatorServices.exchangeTuples(outputTuple));
-                                            if (task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
-                                            {
-                                                contador++; // SAIR
-                                                Console.WriteLine("Received Answer " + contador);
-                                            }
-                                            else
-                                            {
-                                                Console.WriteLine("Did not received answer");
-                                                savedReplicaIDs.Add(replicaID);
-                                                receivedAnswerRandom = false;
-                                                throw new DadStormTimeOutException();
-                                            }
-                                            if (_operator.loggingLevel.Equals("full"))
-                                            {
-                                                new Thread(() => puppetMasterServices.addMessageToLog(constructMsgToLog(outputTuple))).Start();
-                                            }
-                                        }
-                                        catch (System.Net.Sockets.SocketException e) //Operator crashou
-                                        {
-                                            Console.WriteLine("I think that Operator " + replicaID + " crashed. SocketException");
-                                        }
-                                        catch (DadStormTimeOutException e)
-                                        {
-                                            Console.WriteLine("I think that Operator " + replicaID + " crashed. TimeOutException");
-                                        }
-
-                                        catch (Exception e)
-                                        {
-                                            Console.WriteLine("I think that Operator " + replicaID + " crashed. General Exception");
-                                        }
+                                        contador++; // Just to make an aux print in the Console
+                                        Console.WriteLine("Received Answer " + contador);
                                     }
-                                    foreach (string savedReplicaID in savedReplicaIDs)
+                                    else
                                     {
-                                        string failedOperator = savedReplicaID.Split('-')[0];
-                                        int failedReplicaID = Int32.Parse(savedReplicaID.Split('-')[1]);
-                                        aliveReplicas[failedOperator].Remove(failedReplicaID);
+                                        Console.WriteLine("Did not received answer");
+                                        savedReplicaIDs.Add(replicaID);
+                                        receivedAnswer = false;
+                                        throw new DadStormTimeOutException();
                                     }
-
-                                    if (_operator.semantics.Equals("at-most-once") ||
-                                        _operator.semantics.Equals("at-least-once") && (receivedAnswerHashing))
+                                    if (_operator.loggingLevel.Equals("full"))
                                     {
-                                        lock (_operator.outputTuples)
-                                        {
-                                            _operator.outputTuples.RemoveAt(0);
-                                        }
+                                        new Thread(() => puppetMasterServices.addMessageToLog(constructMsgToLog(outputTuple))).Start();
                                     }
-                                    receivedAnswerHashing = false;
                                 }
-                                break;
+                                catch (System.Net.Sockets.SocketException e) //Operator crashou
+                                {
+                                    Console.WriteLine("I think that Operator " + replicaID + " crashed. SocketException");
+                                }
+                                catch (DadStormTimeOutException e)
+                                {
+                                    Console.WriteLine("I think that Operator " + replicaID + " crashed. TimeOutException");
+                                }
 
-                            default:
-                                break;
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine("I think that Operator " + replicaID + " crashed. General Exception");
+                                }
+                            }
+                            foreach (string savedReplicaID in savedReplicaIDs)
+                            {
+                                string failedOperator = savedReplicaID.Split('-')[0];
+                                int failedReplicaID = Int32.Parse(savedReplicaID.Split('-')[1]);
+                                aliveReplicas[failedOperator].Remove(failedReplicaID);
+                            }
+
+                            if (_operator.semantics.Equals("at-most-once") ||
+                                _operator.semantics.Equals("at-least-once") && (receivedAnswer))
+                            {
+                                lock (_operator.outputTuples)
+                                {
+                                    _operator.outputTuples.RemoveAt(0);
+                                }
+                            }
+                            receivedAnswer = false;
                         }
                     }
                 }
