@@ -37,10 +37,10 @@ namespace DADStorm
                                 if (this.inputTuples.Count != 0)
                                 {
                                     checkSleeping();
-                                    string[] inputTuple;
+                                    Tup inputTuple;
                                     lock (this.inputTuples)
                                     {
-                                        inputTuple = (string[])this.inputTuples[0].Clone();
+                                        inputTuple = (Tup)this.inputTuples[0].Clone();
                                     }
                                     object[] args = new object[] { inputTuple };
                                     object resultObject = type.InvokeMember(this.methodCustom,
@@ -50,15 +50,23 @@ namespace DADStorm
                                            args);
                                     IList<IList<string>> result = (IList<IList<string>>)resultObject;
                                     Console.WriteLine("Result of executing Custom Operator: ");
+                                    if (result.Count == 0)
+                                    {
+                                        destroyTupleInAllReplicas(inputTuple.id);
+                                    }
                                     foreach (IList<string> tuple in result)
                                     {
-                                        string[] outputTuple = new string[tuple.Count];
-                                        tuple.CopyTo(outputTuple, 0);
+                                        string[] outputFields = new string[tuple.Count];
+                                        tuple.CopyTo(outputFields, 0);
+                                        int oldID = inputTuple.id;
+                                        Tup outputTuple = new Tup(oldID, outputFields);
                                         Console.Write("tuple: ");
                                         Console.WriteLine(constructTuple(outputTuple));
+                                        addProcessingNumberToAllReplicas();
                                         lock (this.outputTuples)
                                         {
                                             outputTuples.Add(outputTuple);
+                                            _operator.outputTuples.Sort((s1, s2) => s1.id.CompareTo(s2.id));
                                         }
                                     }
                                     lock (this.inputTuples)

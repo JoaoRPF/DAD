@@ -12,3 +12,4 @@ C:\Users\Joao Ferreira\Desktop\DAD\OperatorServices\bin\Debug\OperatorServices.d
 C:\Users\Joao Ferreira\Desktop\DAD\OperatorServices\bin\Debug\OperatorServices.pdb
 C:\Users\Joao Ferreira\Desktop\DAD\OperatorServices\obj\Debug\OperatorServices.dll
 C:\Users\Joao Ferreira\Desktop\DAD\OperatorServices\obj\Debug\OperatorServices.pdb
+C:\Users\Joao Ferreira\Desktop\DAD\OperatorServices\obj\Debug\OperatorServices.csprojResolveAssemblyReference.cache

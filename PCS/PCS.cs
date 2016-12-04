@@ -30,6 +30,7 @@ namespace DADStorm
         {
             //string joinAddressesToSend = String.Join("$", operatorsDict[key].sendAddresses);
             string joinPreviousAddresses = String.Join("$", operatorsDict[key].previousAddresses);
+            string joinMyReplicaAddresses = String.Join("&", operatorsDict[key].myReplicaAddresses);
 
             string result = operatorsDict[key].id + " " +
                             operatorsDict[key].repID + " " +
@@ -47,7 +48,8 @@ namespace DADStorm
                             operatorsDict[key].dllCustom + " " +
                             operatorsDict[key].classCustom + " " +
                             operatorsDict[key].methodCustom + " " + 
-                            joinPreviousAddresses;
+                            joinPreviousAddresses + " " + 
+                            joinMyReplicaAddresses;
             
             return result;
         }
@@ -75,21 +77,23 @@ namespace DADStorm
                     }
                 }
             }
-            /*
-            string[] separator = new string[] { "OP" };
-            string[] previousStringID = operatorID.Split(separator, StringSplitOptions.None);
-            int previousID = Int32.Parse(previousStringID[1]) - 1;
-            string previousOperatorID = "OP" + previousID;
-            //Debug.WriteLine("PREVIOUS ID = " + previousOperatorID);
+        }
 
-            foreach (string previousOP in operatorsDict.Keys)
+        public static string[] setMyReplicasAddresses(string operatorID, int repID)
+        {
+            string operatorKey = operatorID + "-" + repID;
+            string[] myReplicasAddresses = new string[operatorsDict[operatorKey].repFact];
+            myReplicasAddresses[repID] = "NULL";
+
+            foreach (string op in operatorsDict.Keys)
             {
-                if (previousOP.Contains(previousOperatorID))
+                int otherReplicaID = Int32.Parse(op.Split('-')[1]);
+                if (operatorID.Equals(op.Split('-')[0]) && (repID != otherReplicaID))
                 {
-                    operatorsDict[operatorKey].previousAddresses.Add(operatorsDict[previousOP].myAddress);
+                    myReplicasAddresses[otherReplicaID] = operatorsDict[op].myAddress;
                 }
             }
-            */
+            return myReplicasAddresses;
         }
 
         public static string startOperator(string operatorID)
@@ -98,6 +102,7 @@ namespace DADStorm
             {
                 if (key.Contains(operatorID))
                 {
+                    operatorsDict[key].myReplicaAddresses = setMyReplicasAddresses(operatorID, operatorsDict[key].repID);
                     string operatorPath = BuildPaths.getExecPath("\\Operator\\bin\\Debug\\Operator.exe");
                     string operatorArgs = PCS.getAllFieldsOperator(key);
                     ProcessStartInfo operatorStartInfo = new ProcessStartInfo();
@@ -162,6 +167,7 @@ namespace DADStorm
                 PCS.operatorsDict.Add(finalOperator.id + "-" + finalOperator.repID, finalOperator);
                 operatorNumber++;
                 PCS.setMyPreviousAddresses(finalOperator.id, finalOperator.repID);
+                //PCS.setMyReplicasAddresses(finalOperator.id, finalOperator.repID);
             }
 
             foreach (string key in PCS.operatorsDict.Keys)

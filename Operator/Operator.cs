@@ -37,13 +37,14 @@ namespace DADStorm
         public string semantics = "";
         public Dictionary<string, string> sendAddresses = new Dictionary<string, string>();
         public List<string> previousAddresses = new List<string>();
+        public string[] myReplicaAddresses;
 
         public TcpChannel channel;
         public static Operator _operator;
         public static OperatorServices operatorServices;
         public static PuppetMasterServices puppetMasterServices;
-        public List<string[]> inputTuples = new List<string[]>();
-        public List<string[]> outputTuples = new List<string[]>();
+        public List<Tup> inputTuples = new List<Tup>();
+        public List<Tup> outputTuples = new List<Tup>();
 
         public Thread executeThread;
         public Thread sendTuplesThread;
@@ -60,6 +61,11 @@ namespace DADStorm
         public Dictionary<string, List<int>> aliveReplicas = new Dictionary<string, List<int>>();
 
         public int contador = 0;
+
+        public int sequenceNumber = 0; //ID to send
+        public int processingNumber = 0; //ID for processing
+
+        public List<int> deadTuples = new List<int>();
 
         public Operator() {}
 
@@ -106,6 +112,7 @@ namespace DADStorm
             //_operator.input = args[3];
             _operator.status = args[4];
             _operator.repFact = Int32.Parse(args[5]);
+            _operator.myReplicaAddresses = new string[_operator.repFact];
             _operator.type = args[6];
             _operator.routing = args[7];
             _operator.loggingLevel = args[8];
@@ -113,29 +120,57 @@ namespace DADStorm
             if (_operator.type.Equals("UNIQ"))
             {
                 _operator.fieldNumber = Int32.Parse(args[10]);
-                if (args.Length > 11)
+                if (args.Length == 12 && args[11].Contains("$"))
                     _operator.previousAddresses = previousAddressesToList(args[11]);
+                if (args.Length == 12 && args[11].Contains("&"))
+                    _operator.myReplicaAddresses = myReplicaAddressesToList(args[11]);
+                if (args.Length == 13)
+                {
+                    _operator.previousAddresses = previousAddressesToList(args[11]);
+                    _operator.myReplicaAddresses = myReplicaAddressesToList(args[12]);
+                }
             }
             else if (_operator.type.Equals("FILTER"))
             {
                 _operator.fieldNumber = Int32.Parse(args[10]);
                 _operator.condition = args[11];
                 _operator.conditionValue = args[12];
-                if (args.Length > 13)
+                if (args.Length == 14 && args[13].Contains("$"))
                     _operator.previousAddresses = previousAddressesToList(args[13]);
+                if (args.Length == 14 && args[13].Contains("&"))
+                    _operator.myReplicaAddresses = myReplicaAddressesToList(args[13]);
+                if (args.Length == 15)
+                {
+                    _operator.previousAddresses = previousAddressesToList(args[13]);
+                    _operator.myReplicaAddresses = myReplicaAddressesToList(args[14]);
+                }
             }
             else if (_operator.type.Equals("DUP") || _operator.type.Equals("COUNT"))
             {
-                if (args.Length > 11)
+                if (args.Length == 12 && args[11].Contains("$"))
                     _operator.previousAddresses = previousAddressesToList(args[11]);
+                if (args.Length == 12 && args[11].Contains("&"))
+                    _operator.myReplicaAddresses = myReplicaAddressesToList(args[11]);
+                if (args.Length == 13)
+                {
+                    _operator.previousAddresses = previousAddressesToList(args[11]);
+                    _operator.myReplicaAddresses = myReplicaAddressesToList(args[12]);
+                }
             }
             else if (_operator.type.Equals("CUSTOM"))
             {
                 _operator.dllCustom = args[11];
                 _operator.classCustom = args[12];
                 _operator.methodCustom = args[13];
-                if (args.Length > 14)
+                if (args.Length == 15 && args[14].Contains("$"))
                     _operator.previousAddresses = previousAddressesToList(args[14]);
+                if (args.Length == 15 && args[14].Contains("&"))
+                    _operator.myReplicaAddresses = myReplicaAddressesToList(args[14]);
+                if (args.Length == 16)
+                {
+                    _operator.previousAddresses = previousAddressesToList(args[14]);
+                    _operator.myReplicaAddresses = myReplicaAddressesToList(args[15]);
+                }
             }
 
             ChannelServices.RegisterChannel(_operator.channel, true);
@@ -184,6 +219,25 @@ namespace DADStorm
             return listAddresses;
         }
 
+        private static string[] myReplicaAddressesToList(string addressesToSend)
+        {
+            string[] listAddresses = new string[_operator.repFact];
+            int i = 0;
+            foreach (string address in addressesToSend.Split('&'))
+            {
+                if (!address.Equals("NULL"))
+                {
+                    listAddresses[i] = address;
+                }
+                else
+                {
+                    listAddresses[i] = null;
+                }
+                i++;
+            }
+            return listAddresses;
+        }
+
         private static int getPort(string address)
         {
             int port = Int32.Parse(address.Split(':')[2].Split('/')[0]);
@@ -193,6 +247,7 @@ namespace DADStorm
         private static void readFileToInputBuffer(string file)
         {
             string[] lines = File.ReadAllLines(file);
+            int cont = 0;
             for (int i = 0; i < lines.Length; i++)
             {
                 string[] line = lines[i].Split(new[] { ", " }, StringSplitOptions.None);
@@ -205,7 +260,9 @@ namespace DADStorm
                         {
                             fields[j] = line[j];
                         }
-                        _operator.inputTuples.Add(fields);
+                        cont++;
+                        Tup tup = new Tup(cont, fields);                      
+                        _operator.inputTuples.Add(tup);
                     }
                 }
             }
@@ -281,28 +338,6 @@ namespace DADStorm
             Console.WriteLine("SEMANTICS = " + this.semantics);
         }
 
-        public List<string[]> readInputFromFile(string inputFilepath)
-        {
-            List<string[]> inputList = new List<string[]>();
-            string[] lines = File.ReadAllLines(inputFilepath);
-            for (int i=0; i < lines.Length; i++)
-            {
-                string[] line = lines[i].Split(new[] {", "}, StringSplitOptions.None);
-                if (!String.IsNullOrEmpty(line[0])){
-                    if (!line[0].StartsWith("%%"))
-                    {
-                        string[] fields = new string[line.Length];
-                        for (int j=0; j < line.Length; j++)
-                        {
-                            fields[j] = line[j];
-                        }
-                        inputList.Add(fields);
-                    }
-                }
-            }
-            return inputList;
-        }
-
         public void printTuples(List<string[]> tuples)
         {
             foreach (string[] _tuple in tuples){
@@ -366,12 +401,16 @@ namespace DADStorm
                 }
                 if (_operator.outputTuples.Count != 0)
                 {
-                    string[] outputTuple;
+                    Tup outputTuple;
                     lock (_operator.outputTuples)
                     {
-                        outputTuple = (string[])_operator.outputTuples[0].Clone();
+                        outputTuple = (Tup)_operator.outputTuples[0].Clone();
+                        /*foreach (Tup tup in _operator.outputTuples)
+                        {
+                            Console.WriteLine("tup = " + tup.id);
+                        }*/
                     }
-
+                    
                     lock (_operator.sendAddresses)
                     {
                         string routing = _operator.routing;
@@ -386,64 +425,85 @@ namespace DADStorm
                         if (_operator.sendAddresses.Count != 0)
                         {
                             List<string> savedReplicaIDs = new List<string>();
-                            foreach (string operatorID in aliveReplicas.Keys)
+                            bool validID = false;
+                            Console.WriteLine("output tuple ID = " + outputTuple.id);
+                            Console.WriteLine("processing number = " + _operator.processingNumber);
+                            //Thread.Sleep(10000);
+                            _operator.atualizaProcessingNumber();
+                            if (outputTuple.id == _operator.processingNumber + 1)
                             {
-                                int limit = aliveReplicas[operatorID].Count;
-                                int replicaIndex = -1;
-                                switch (routing)
+                                Console.WriteLine("OLAAA");
+                                validID = true;
+                                outputTuple.id = _operator.sequenceNumber + 1;
+                                foreach (string operatorID in aliveReplicas.Keys)
                                 {
-                                    case "primary":
-                                        replicaIndex = 0; //Always the first available replica of each operator
-                                        break;
-                                    case "random":
-                                        Random random = new Random();
-                                        replicaIndex = random.Next(0, limit);
-                                        break;
-                                    case "hashing":
-                                        replicaIndex = getHashValue(outputTuple, limit, fieldNumberHashing);
-                                        break;
-                                }
-                                int id = aliveReplicas[operatorID][replicaIndex];
-                                string replicaID = operatorID + "-" + id;
-                                string sendAddress = _operator.sendAddresses[replicaID];
-                                try
-                                {
-                                    operatorServices = (OperatorServices)Activator.GetObject(
-                                                        typeof(OperatorServices),
-                                                        sendAddress);
-                                    Console.WriteLine("Sending to " + sendAddress + " the following tuple -> " + constructTuple(outputTuple));
-                                    var task = Task.Run(() => operatorServices.exchangeTuples(outputTuple));
-                                    if (task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
+                                    int limit = aliveReplicas[operatorID].Count;
+                                    int replicaIndex = -1;
+                                    switch (routing)
                                     {
-                                        contador++; // Just to make an aux print in the Console
-                                        Console.WriteLine("Received Answer " + contador);
+                                        case "primary":
+                                            replicaIndex = 0; //Always the first available replica of each operator
+                                            break;
+                                        case "random":
+                                            Random random = new Random();
+                                            replicaIndex = random.Next(0, limit);
+                                            break;
+                                        case "hashing":
+                                            replicaIndex = getHashValue(outputTuple, limit, fieldNumberHashing);
+                                            break;
                                     }
-                                    else
+                                    Console.WriteLine("BBBBB");
+                                    int id = aliveReplicas[operatorID][replicaIndex];
+                                    string replicaID = operatorID + "-" + id;
+                                    string sendAddress = _operator.sendAddresses[replicaID];
+                                    try
                                     {
-                                        Console.WriteLine("Did not received answer");
-                                        savedReplicaIDs.Add(replicaID);
-                                        receivedAnswer = false;
-                                        throw new DadStormTimeOutException();
+                                        operatorServices = (OperatorServices)Activator.GetObject(
+                                                            typeof(OperatorServices),
+                                                            sendAddress);
+                                        Console.WriteLine("Sending to " + sendAddress + " the following tuple -> " + constructTuple(outputTuple));
+                                        var task = Task.Run(() => operatorServices.exchangeTuples(outputTuple));
+                                        if (task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
+                                        {
+                                            contador++; // Just to make an aux print in the Console
+                                            Console.WriteLine("Received Answer " + contador);
+                                            addSequenceNumberToAllReplicas();
+                                            addProcessingNumberToAllReplicas();
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("Did not received answer");
+                                            savedReplicaIDs.Add(replicaID);
+                                            receivedAnswer = false;
+                                            if (_operator.semantics.Equals("at-most-once"))
+                                            {
+                                                _operator.addSequenceNumberToAllReplicas();
+                                                _operator.addProcessingNumberToAllReplicas();
+                                            }
+                                            throw new DadStormTimeOutException();
+                                        }
+                                        if (_operator.loggingLevel.Equals("full"))
+                                        {
+                                            new Thread(() => puppetMasterServices.addMessageToLog(constructMsgToLog(outputTuple))).Start();
+                                        }
                                     }
-                                    if (_operator.loggingLevel.Equals("full"))
+                                    catch (System.Net.Sockets.SocketException e) //Operator crashou
                                     {
-                                        new Thread(() => puppetMasterServices.addMessageToLog(constructMsgToLog(outputTuple))).Start();
+                                        Console.WriteLine("I think that Operator " + replicaID + " crashed. SocketException");
                                     }
-                                }
-                                catch (System.Net.Sockets.SocketException e) //Operator crashou
-                                {
-                                    Console.WriteLine("I think that Operator " + replicaID + " crashed. SocketException");
-                                }
-                                catch (DadStormTimeOutException e)
-                                {
-                                    Console.WriteLine("I think that Operator " + replicaID + " crashed. TimeOutException");
-                                }
+                                    catch (DadStormTimeOutException e)
+                                    {
+                                        Console.WriteLine("I think that Operator " + replicaID + " crashed. TimeOutException");
+                                    }
 
-                                catch (Exception e)
-                                {
-                                    Console.WriteLine("I think that Operator " + replicaID + " crashed. General Exception");
+                                    catch (Exception e)
+                                    {
+                                        Console.WriteLine("EXCEPTION = " + e.InnerException.Message);
+                                        Console.WriteLine("I think that Operator " + replicaID + " crashed. General Exception");
+                                    }
                                 }
                             }
+                        
                             foreach (string savedReplicaID in savedReplicaIDs)
                             {
                                 string failedOperator = savedReplicaID.Split('-')[0];
@@ -451,7 +511,7 @@ namespace DADStorm
                                 aliveReplicas[failedOperator].Remove(failedReplicaID);
                             }
 
-                            if (_operator.semantics.Equals("at-most-once") ||
+                            if (_operator.semantics.Equals("at-most-once") && validID ||
                                 _operator.semantics.Equals("at-least-once") && (receivedAnswer))
                             {
                                 lock (_operator.outputTuples)
@@ -464,6 +524,25 @@ namespace DADStorm
                     }
                 }
             }
+        }
+
+        private void atualizaProcessingNumber()
+        {
+            bool flag = false;
+            lock (_operator.deadTuples)
+            {
+                if(_operator.deadTuples.Contains(_operator.processingNumber + 1))
+                {
+                    _operator.deadTuples.Remove(_operator.processingNumber + 1);
+                    _operator.processingNumber++;
+                    flag = true;
+                }
+            }
+            if (flag)
+            {
+                atualizaProcessingNumber();
+            }
+            Console.WriteLine("Vou sair");
         }
 
         private Dictionary<string, int> getNumberOfReplicas()
@@ -516,24 +595,24 @@ namespace DADStorm
             }
         }
 
-        private int getHashValue(string[] tuple, int limit, int fieldNumber)
+        private int getHashValue(Tup tuple, int limit, int fieldNumber)
         {
-            string strToHash = tuple[fieldNumber - 1];
+            string strToHash = tuple.fields[fieldNumber - 1];
             int hashValue = strToHash.GetHashCode() % limit;
             return Math.Abs(hashValue);
         }
 
-        public string constructMsgToLog(string[] tupleArray)
+        public string constructMsgToLog(Tup tup)
         {
             string message = "tuple " + _operator.myAddress + ", ";
-            string tuple = constructTuple(tupleArray);
+            string tuple = constructTuple(tup);
             return message + tuple;
         }
 
-        public string constructTuple(string[] tupleArray)
+        public string constructTuple(Tup tup)
         {
             string tuple = "";
-            foreach (string s in tupleArray)
+            foreach (string s in tup.fields)
             {
                 tuple += s + ", ";
             }
@@ -541,7 +620,7 @@ namespace DADStorm
             return tuple;
         }
 
-        public void exchangeTuples(string[] tuple)
+        public void exchangeTuples(Tup tuple)
         {
             Console.WriteLine("Received the following tuple -> " + constructTuple(tuple));
             lock(_operator.inputTuples){
@@ -621,6 +700,68 @@ namespace DADStorm
             {
                 _operator.sendAddresses.Add(operatorID, sendAddress);
             }
-        }    
+        }  
+        
+        public void addSequenceNumber()
+        {
+            _operator.sequenceNumber++;
+        }  
+
+        public void addProcessingNumber()
+        {
+            _operator.processingNumber++;
+        }
+
+        public void destroyTuple(int id)
+        {
+            lock (_operator.deadTuples)
+            {
+                _operator.deadTuples.Add(id);
+            }
+        }
+
+        public void addSequenceNumberToAllReplicas()
+        {
+            _operator.sequenceNumber++;
+            foreach (string address in _operator.myReplicaAddresses)
+            {
+                if (address != null)
+                {
+                    operatorServices = (OperatorServices)Activator.GetObject(
+                                                                typeof(OperatorServices),
+                                                                address);
+                    operatorServices.addSequenceNumber();
+                }
+            }
+        }
+
+        public void addProcessingNumberToAllReplicas()
+        {
+            _operator.processingNumber++;
+            foreach (string address in _operator.myReplicaAddresses)
+            {
+                if (address != null)
+                {
+                    operatorServices = (OperatorServices)Activator.GetObject(
+                                                                typeof(OperatorServices),
+                                                                address);
+                    operatorServices.addProcessingNumber();
+                }
+            }
+        }
+
+        public void destroyTupleInAllReplicas(int id)
+        {
+            foreach (string address in _operator.myReplicaAddresses)
+            {
+                if (address != null)
+                {
+                    operatorServices = (OperatorServices)Activator.GetObject(
+                                                                typeof(OperatorServices),
+                                                                address);
+                    operatorServices.destroyTuple(id);
+                }
+            }
+        }
     }
 }

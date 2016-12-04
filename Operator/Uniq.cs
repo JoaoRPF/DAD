@@ -9,7 +9,7 @@ namespace DADStorm
 {
     class Uniq : Operator
     {
-        private List<string[]> uniqTuples = new List<string[]>();
+        private List<Tup> uniqTuples = new List<Tup>();
 
         public override void execute()
         {
@@ -19,22 +19,31 @@ namespace DADStorm
             while (true)
             {
                 base.execute();
-                string[] inputTuple;
+                Tup inputTuple;
                 if (this.inputTuples.Count != 0)
                 {
                     checkSleeping();
                     lock (this.inputTuples)
                     {
-                        inputTuple = (string[])this.inputTuples[0].Clone();
+                        inputTuple = (Tup)this.inputTuples[0].Clone();
                     }
                     Console.WriteLine("Processing tuple -> " + constructTuple(inputTuple));
-                    if (!uniqTuples.Exists(x => x[this.fieldNumber - 1].Equals(inputTuple[this.fieldNumber - 1]))) //MAIS ORGULHO
+                    if (!uniqTuples.Exists(x => x.fields[this.fieldNumber - 1].Equals(inputTuple.fields[this.fieldNumber - 1]))) //MAIS ORGULHO
                     {
                         uniqTuples.Add(inputTuple);
                         lock (this.outputTuples)
                         {
+                            /*foreach (Tup tup in _operator.outputTuples)
+                            {
+                                Console.WriteLine("tuppppp = " + tup.id);
+                            }*/
                             outputTuples.Add(inputTuple);
+                            _operator.outputTuples.Sort((s1, s2) => s1.id.CompareTo(s2.id));
                         }
+                    }
+                    else
+                    {
+                        destroyTupleInAllReplicas(inputTuple.id);
                     }
                     lock (this.inputTuples)
                     {

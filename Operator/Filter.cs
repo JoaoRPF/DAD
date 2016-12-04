@@ -18,21 +18,22 @@ namespace DADStorm
                 if (this.inputTuples.Count != 0)
                 {
                     checkSleeping();
-                    string[] inputTuple;
+                    Tup inputTuple;
                     lock (this.inputTuples)
                     {
-                        inputTuple = (string[])this.inputTuples[0].Clone();
+                        inputTuple = (Tup)this.inputTuples[0].Clone();
                     }
                     Console.WriteLine("Processing tuple -> " + constructTuple(inputTuple));
 
 
-                    int compare = String.Compare(inputTuple[this.fieldNumber - 1].Trim('"'), this.conditionValue);
+                    int compare = String.Compare(inputTuple.fields[this.fieldNumber - 1].Trim('"'), this.conditionValue);
 
                     if (this.condition.Equals("=") && compare == 0)
                     {
                         lock (this.outputTuples)
                         {
                             outputTuples.Add(inputTuple);
+                            _operator.outputTuples.Sort((s1, s2) => s1.id.CompareTo(s2.id));
                         }
                     }   
                     if (this.condition.Equals(">") && compare > 0)
@@ -40,6 +41,7 @@ namespace DADStorm
                         lock (this.outputTuples)
                         {
                             outputTuples.Add(inputTuple);
+                            _operator.outputTuples.Sort((s1, s2) => s1.id.CompareTo(s2.id));
                         }
                     }
                     if (this.condition.Equals("<") && compare < 0)
@@ -47,8 +49,14 @@ namespace DADStorm
                         lock (this.outputTuples)
                         {
                             outputTuples.Add(inputTuple);
+                            _operator.outputTuples.Sort((s1, s2) => s1.id.CompareTo(s2.id));
                         }
                     }
+                    else
+                    {
+                        destroyTupleInAllReplicas(inputTuple.id);
+                    }            
+
                     lock (this.inputTuples)
                     {
                         inputTuples.RemoveAt(0);

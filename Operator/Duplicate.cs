@@ -17,18 +17,19 @@ namespace DADStorm
             while (true)
             {
                 base.execute();
-                string[] inputTuple;
+                Tup inputTuple;
                 if (this.inputTuples.Count != 0)
                 {
                     checkSleeping();
                     lock (this.inputTuples)
                     {
-                        inputTuple = (string[])this.inputTuples[0].Clone();
+                        inputTuple = (Tup)this.inputTuples[0].Clone();
                     }
                     Console.WriteLine("Processing tuple -> " + constructTuple(inputTuple));
                     lock (this.outputTuples)
                     {
                         outputTuples.Add(inputTuple);
+                        _operator.outputTuples.Sort((s1, s2) => s1.id.CompareTo(s2.id));
                     }
                     lock (this.inputTuples)
                     {

@@ -44,7 +44,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AtMostOnce.cs" />
     <Compile Include="Count.cs" />
     <Compile Include="Custom.cs" />
     <Compile Include="Duplicate.cs" />
