@@ -12,3 +12,8 @@ C:\Users\Joao Ferreira\Desktop\DAD\OperatorServices\bin\Debug\OperatorServices.d
 C:\Users\Joao Ferreira\Desktop\DAD\OperatorServices\bin\Debug\OperatorServices.pdb
 C:\Users\Joao Ferreira\Desktop\DAD\OperatorServices\obj\Debug\OperatorServices.dll
 C:\Users\Joao Ferreira\Desktop\DAD\OperatorServices\obj\Debug\OperatorServices.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\OperatorServices\bin\Debug\OperatorServices.dll
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\OperatorServices\bin\Debug\OperatorServices.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\OperatorServices\obj\Debug\OperatorServices.csprojResolveAssemblyReference.cache
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\OperatorServices\obj\Debug\OperatorServices.dll
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\OperatorServices\obj\Debug\OperatorServices.pdb

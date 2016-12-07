@@ -38,3 +38,19 @@ C:\Users\Joao Ferreira\Desktop\DAD\PCS\bin\Debug\PuppetMasterServices.pdb
 C:\Users\Joao Ferreira\Desktop\DAD\PCS\obj\Debug\PCS.csprojResolveAssemblyReference.cache
 C:\Users\Joao Ferreira\Desktop\DAD\PCS\obj\Debug\PCS.exe
 C:\Users\Joao Ferreira\Desktop\DAD\PCS\obj\Debug\PCS.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PCS\bin\Debug\PCS.exe.config
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PCS\obj\Debug\PCS.exe
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PCS\obj\Debug\PCS.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PCS\bin\Debug\PCS.exe
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PCS\bin\Debug\PCS.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PCS\bin\Debug\LibDADStorm.dll
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PCS\bin\Debug\Operator.exe
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PCS\bin\Debug\PCServices.dll
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PCS\bin\Debug\OperatorServices.dll
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PCS\bin\Debug\PuppetMasterServices.dll
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PCS\bin\Debug\Operator.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PCS\bin\Debug\PCServices.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PCS\bin\Debug\LibDADStorm.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PCS\bin\Debug\OperatorServices.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PCS\bin\Debug\PuppetMasterServices.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PCS\obj\Debug\PCS.csprojResolveAssemblyReference.cache

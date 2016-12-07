@@ -9,7 +9,7 @@ namespace DADStorm
     public interface OperatorServices
     {
         void exchangeTuples(string[] tuples);
-        void setSendAddresses(string operatorID, string sendAddress);
+        void setSendAddresses(string operatorID, string sendAddress, string routing, int repFact);
         void startToProcess();
         void printStatus();
         void freezeOperator();

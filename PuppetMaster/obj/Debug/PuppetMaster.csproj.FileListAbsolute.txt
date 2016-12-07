@@ -45,3 +45,20 @@ C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\obj\Debug\PuppetMaster.Propertie
 C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\obj\Debug\PuppetMaster.csproj.GenerateResource.Cache
 C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\obj\Debug\PuppetMaster.exe
 C:\Users\Joao Ferreira\Desktop\DAD\PuppetMaster\obj\Debug\PuppetMaster.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PuppetMaster\bin\Debug\PuppetMaster.exe.config
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PuppetMaster\obj\Debug\PuppetMaster.exe
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PuppetMaster\obj\Debug\PuppetMaster.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PuppetMaster\bin\Debug\PuppetMaster.exe
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PuppetMaster\bin\Debug\PuppetMaster.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PuppetMaster\bin\Debug\Operator.exe
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PuppetMaster\bin\Debug\OperatorServices.dll
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PuppetMaster\bin\Debug\PCServices.dll
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PuppetMaster\bin\Debug\PuppetMasterServices.dll
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PuppetMaster\bin\Debug\OperatorServices.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PuppetMaster\bin\Debug\Operator.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PuppetMaster\bin\Debug\PCServices.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PuppetMaster\bin\Debug\PuppetMasterServices.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PuppetMaster\obj\Debug\PuppetMaster.csprojResolveAssemblyReference.cache
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PuppetMaster\obj\Debug\DADStorm.Form1.resources
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PuppetMaster\obj\Debug\PuppetMaster.Properties.Resources.resources
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PuppetMaster\obj\Debug\PuppetMaster.csproj.GenerateResource.Cache

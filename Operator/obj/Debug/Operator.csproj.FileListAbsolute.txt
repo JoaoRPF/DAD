@@ -32,3 +32,17 @@ C:\Users\Joao Ferreira\Desktop\DAD\Operator\bin\Debug\PuppetMasterServices.pdb
 C:\Users\Joao Ferreira\Desktop\DAD\Operator\obj\Debug\Operator.csprojResolveAssemblyReference.cache
 C:\Users\Joao Ferreira\Desktop\DAD\Operator\obj\Debug\Operator.exe
 C:\Users\Joao Ferreira\Desktop\DAD\Operator\obj\Debug\Operator.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\Operator\bin\Debug\Operator.exe.config
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\Operator\bin\Debug\Operator.exe
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\Operator\bin\Debug\Operator.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\Operator\bin\Debug\LibDADStorm.dll
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\Operator\bin\Debug\OperatorServices.dll
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\Operator\bin\Debug\PCServices.dll
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\Operator\bin\Debug\PuppetMasterServices.dll
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\Operator\bin\Debug\OperatorServices.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\Operator\bin\Debug\PCServices.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\Operator\bin\Debug\PuppetMasterServices.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\Operator\bin\Debug\LibDADStorm.pdb
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\Operator\obj\Debug\Operator.csprojResolveAssemblyReference.cache
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\Operator\obj\Debug\Operator.exe
+H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\Operator\obj\Debug\Operator.pdb

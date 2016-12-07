@@ -19,14 +19,23 @@ namespace DADStorm
             while (true)
             {
                 base.execute();
-                string[] inputTuple;
-                if (this.inputTuples.Count != 0)
+                string[] inputTuple = null;
+                int tuplesCount;
+                lock (this.inputTuples)
                 {
-                    checkSleeping();
-                    lock (this.inputTuples)
+                    tuplesCount = this.inputTuples.Count;
+                    if (tuplesCount != 0)
                     {
                         inputTuple = (string[])this.inputTuples[0].Clone();
                     }
+                }
+                if (inputTuple != null)
+                {
+                    checkSleeping();
+                    /*lock (this.inputTuples)
+                    {
+                        inputTuple = (string[])this.inputTuples[0].Clone();
+                    }*/
                     Console.WriteLine("Processing tuple -> " + constructTuple(inputTuple));
                     if (!uniqTuples.Exists(x => x[this.fieldNumber - 1].Equals(inputTuple[this.fieldNumber - 1]))) //MAIS ORGULHO
                     {
