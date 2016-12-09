@@ -22,3 +22,8 @@ C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\OperatorServices\bin\Debug\Operato
 C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\OperatorServices\obj\Debug\OperatorServices.csprojResolveAssemblyReference.cache
 C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\OperatorServices\obj\Debug\OperatorServices.dll
 C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\OperatorServices\obj\Debug\OperatorServices.pdb
+C:\Users\Ivo Pires\Desktop\DAD\OperatorServices\bin\Debug\OperatorServices.dll
+C:\Users\Ivo Pires\Desktop\DAD\OperatorServices\bin\Debug\OperatorServices.pdb
+C:\Users\Ivo Pires\Desktop\DAD\OperatorServices\obj\Debug\OperatorServices.csprojResolveAssemblyReference.cache
+C:\Users\Ivo Pires\Desktop\DAD\OperatorServices\obj\Debug\OperatorServices.dll
+C:\Users\Ivo Pires\Desktop\DAD\OperatorServices\obj\Debug\OperatorServices.pdb

@@ -56,7 +56,7 @@ namespace DADStorm
                                         tuple.CopyTo(outputTuple, 0);
                                         Console.Write("tuple: ");
                                         Console.WriteLine(constructTuple(outputTuple));
-                                        ForwardTup oTup = new ForwardTup(outputTuple);
+                                        ForwardTup oTup = new ForwardTup(outputTuple, inputTuple.tupleID);
                                         lock (this.outputTuples)
                                         {
                                             outputTuples.Add(oTup);

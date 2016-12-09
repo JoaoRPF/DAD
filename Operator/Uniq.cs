@@ -19,7 +19,8 @@ namespace DADStorm
             while (true)
             {
                 base.execute();
-                ForwardTup inputTuple = new ForwardTup(null);
+                ForwardTup inputTuple = new ForwardTup();
+                inputTuple.tup = null;
                 int tuplesCount;
                 lock (this.inputTuples)
                 {

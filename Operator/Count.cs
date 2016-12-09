@@ -29,7 +29,7 @@ namespace DADStorm
                     Console.WriteLine("Number of Tuples = " + count);
                     lock (this.outputTuples)
                     {
-                        outputTuples.Add(new ForwardTup (new string[] { count.ToString() } ));
+                        outputTuples.Add(new ForwardTup (new string[] {count.ToString()}, inputTuple.tupleID));
                     }
                     lock (this.inputTuples)
                     {

@@ -60,3 +60,17 @@ C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\Operator\bin\Debug\LibDADStorm.pdb
 C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\Operator\obj\Debug\Operator.csprojResolveAssemblyReference.cache
 C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\Operator\obj\Debug\Operator.exe
 C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\Operator\obj\Debug\Operator.pdb
+C:\Users\Ivo Pires\Desktop\DAD\Operator\bin\Debug\Operator.exe.config
+C:\Users\Ivo Pires\Desktop\DAD\Operator\bin\Debug\Operator.exe
+C:\Users\Ivo Pires\Desktop\DAD\Operator\bin\Debug\Operator.pdb
+C:\Users\Ivo Pires\Desktop\DAD\Operator\bin\Debug\LibDADStorm.dll
+C:\Users\Ivo Pires\Desktop\DAD\Operator\bin\Debug\OperatorServices.dll
+C:\Users\Ivo Pires\Desktop\DAD\Operator\bin\Debug\PCServices.dll
+C:\Users\Ivo Pires\Desktop\DAD\Operator\bin\Debug\PuppetMasterServices.dll
+C:\Users\Ivo Pires\Desktop\DAD\Operator\bin\Debug\OperatorServices.pdb
+C:\Users\Ivo Pires\Desktop\DAD\Operator\bin\Debug\PCServices.pdb
+C:\Users\Ivo Pires\Desktop\DAD\Operator\bin\Debug\PuppetMasterServices.pdb
+C:\Users\Ivo Pires\Desktop\DAD\Operator\bin\Debug\LibDADStorm.pdb
+C:\Users\Ivo Pires\Desktop\DAD\Operator\obj\Debug\Operator.csprojResolveAssemblyReference.cache
+C:\Users\Ivo Pires\Desktop\DAD\Operator\obj\Debug\Operator.exe
+C:\Users\Ivo Pires\Desktop\DAD\Operator\obj\Debug\Operator.pdb
