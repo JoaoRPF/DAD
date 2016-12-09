@@ -17,19 +17,19 @@ namespace DADStorm
             {
                 base.execute();
 
-                string[] inputTuple;
+                ForwardTup inputTuple;
                 if (this.inputTuples.Count != 0)
                 {
                     checkSleeping();
                     lock (this.inputTuples)
                     {
-                        inputTuple = (string[])this.inputTuples[0].Clone();
+                        inputTuple = (ForwardTup)this.inputTuples[0].Clone();
                     }
                     count++;
                     Console.WriteLine("Number of Tuples = " + count);
                     lock (this.outputTuples)
                     {
-                        outputTuples.Add(new string[] {count.ToString()});
+                        outputTuples.Add(new ForwardTup (new string[] { count.ToString() } ));
                     }
                     lock (this.inputTuples)
                     {

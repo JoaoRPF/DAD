@@ -17,3 +17,8 @@ H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47
 H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PCServices\obj\Debug\PCServices.csprojResolveAssemblyReference.cache
 H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PCServices\obj\Debug\PCServices.dll
 H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PCServices\obj\Debug\PCServices.pdb
+C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\PCServices\bin\Debug\PCServices.dll
+C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\PCServices\bin\Debug\PCServices.pdb
+C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\PCServices\obj\Debug\PCServices.csprojResolveAssemblyReference.cache
+C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\PCServices\obj\Debug\PCServices.dll
+C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\PCServices\obj\Debug\PCServices.pdb

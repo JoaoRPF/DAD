@@ -18,15 +18,15 @@ namespace DADStorm
                 if (this.inputTuples.Count != 0)
                 {
                     checkSleeping();
-                    string[] inputTuple;
+                    ForwardTup inputTuple;
                     lock (this.inputTuples)
                     {
-                        inputTuple = (string[])this.inputTuples[0].Clone();
+                        inputTuple = (ForwardTup)this.inputTuples[0].Clone();
                     }
-                    Console.WriteLine("Processing tuple -> " + constructTuple(inputTuple));
+                    Console.WriteLine("Processing tuple -> " + constructTuple(inputTuple.tup));
 
 
-                    int compare = String.Compare(inputTuple[this.fieldNumber - 1].Trim('"'), this.conditionValue);
+                    int compare = String.Compare(inputTuple.tup[this.fieldNumber - 1].Trim('"'), this.conditionValue);
 
                     if (this.condition.Equals("=") && compare == 0)
                     {

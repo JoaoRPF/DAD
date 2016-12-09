@@ -7,3 +7,8 @@ H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47
 H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PuppetMasterServices\obj\Debug\PuppetMasterServices.csprojResolveAssemblyReference.cache
 H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PuppetMasterServices\obj\Debug\PuppetMasterServices.dll
 H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\PuppetMasterServices\obj\Debug\PuppetMasterServices.pdb
+C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\PuppetMasterServices\bin\Debug\PuppetMasterServices.dll
+C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\PuppetMasterServices\bin\Debug\PuppetMasterServices.pdb
+C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\PuppetMasterServices\obj\Debug\PuppetMasterServices.csprojResolveAssemblyReference.cache
+C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\PuppetMasterServices\obj\Debug\PuppetMasterServices.dll
+C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\PuppetMasterServices\obj\Debug\PuppetMasterServices.pdb

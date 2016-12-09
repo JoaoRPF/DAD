@@ -17,3 +17,8 @@ H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47
 H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\OperatorServices\obj\Debug\OperatorServices.csprojResolveAssemblyReference.cache
 H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\OperatorServices\obj\Debug\OperatorServices.dll
 H:\Windows\Desktop\DAD-b57dd958df47b09df37c144186586ae262425459\DAD-b57dd958df47b09df37c144186586ae262425459\OperatorServices\obj\Debug\OperatorServices.pdb
+C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\OperatorServices\bin\Debug\OperatorServices.dll
+C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\OperatorServices\bin\Debug\OperatorServices.pdb
+C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\OperatorServices\obj\Debug\OperatorServices.csprojResolveAssemblyReference.cache
+C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\OperatorServices\obj\Debug\OperatorServices.dll
+C:\Users\lagarto\Desktop\ist\DAD_PROJ_REP\DAD\OperatorServices\obj\Debug\OperatorServices.pdb

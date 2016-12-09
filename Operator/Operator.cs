@@ -16,6 +16,7 @@ namespace DADStorm
     public class Operator : MarshalByRefObject, OperatorServices
     {
         private int TIMEOUT = 10; //10 seconds for remote call timeout
+        private int PING_TIMEOUT = 5; //10 seconds for remote call timeout
 
         public string id = "";
         public int repID = -1;
@@ -45,8 +46,8 @@ namespace DADStorm
         public static Operator _operator;
         public static OperatorServices operatorServices;
         public static PuppetMasterServices puppetMasterServices;
-        public List<string[]> inputTuples = new List<string[]>();
-        public List<string[]> outputTuples = new List<string[]>();
+        public List<ForwardTup> inputTuples = new List<ForwardTup>();
+        public List<ForwardTup> outputTuples = new List<ForwardTup>();
 
         public Thread executeThread;
         public Thread sendTuplesThread;
@@ -62,7 +63,15 @@ namespace DADStorm
 
         public Dictionary<string, bool[]> aliveReplicas = new Dictionary<string, bool[]>();
 
+        public Bitstorm bitStorm = new Bitstorm();
+
         public int contador = 0;
+        private Thread pingThread;
+        public int masterID = 0;
+        public int[] oldRepPings;
+        public int[] newRepPings;
+        public bool[] updatedRep;
+        private int MAX_REPLICAS = 100;
 
         public Operator() {}
 
@@ -110,6 +119,9 @@ namespace DADStorm
             _operator.status = args[4];
             _operator.repFact = Int32.Parse(args[5]);
             _operator.myReplicaAddresses = new string[_operator.repFact];
+            _operator.oldRepPings = new int[_operator.repFact];
+            _operator.newRepPings = new int[_operator.repFact];
+            _operator.updatedRep = new bool[_operator.repFact];
             _operator.type = args[6];
             _operator.routing = args[7];
             _operator.loggingLevel = args[8];
@@ -174,6 +186,9 @@ namespace DADStorm
             {
                 string replicaID = _operator.id + "-" + i;
                 _operator.addToAliveReplicas(replicaID, _operator.repFact);
+                _operator.oldRepPings[i] = 0;
+                _operator.newRepPings[i] = 0;
+                _operator.updatedRep[i] = false;
             }
 
             ChannelServices.RegisterChannel(_operator.channel, true);
@@ -279,16 +294,18 @@ namespace DADStorm
                                 break;
                             case "random":
                                 workReplica = randomFile.Next(0, limit);
-                                workReplica = getCorrectAliveID(id, workReplica, limit);
+                                workReplica = _operator.getCorrectAliveID(id, workReplica, limit);
                                 break;
                             case "hashing":
-                                workReplica = getHashValue(fields, limit, fieldNumberHashing, id);
+                                ForwardTup tup = new ForwardTup(fields);
+                                workReplica = _operator.getHashValue(tup, limit, fieldNumberHashing, id);
                                 break;
                         }
                         if (workReplica == repID)
                         {
                             lock (_operator.inputTuples) {
-                                _operator.inputTuples.Add(fields);
+                                ForwardTup tup = new ForwardTup(fields);
+                                _operator.inputTuples.Add(tup);
                             }
                         }
                     }
@@ -422,15 +439,117 @@ namespace DADStorm
             _operator.sendTuplesThread = new Thread(_operator.sendTuples);
             _operator.sendTuplesThread.Start();
 
+            _operator.pingThread = new Thread(_operator.stormTolerance);
+            _operator.pingThread.Start();
+
             foreach (string file in _operator.inputFile)
             {
                 _operator.readFileToInputBuffer(file);
             }
         }
 
+        private void stormTolerance()
+        {
+            Thread.Sleep(3000);
+            while (true)
+            {
+                if (_operator.freeze || semantics.Equals("at-most-once"))
+                {
+                    continue;
+                }
+                Console.WriteLine("storm Tolerance is alive ! ");
+                if (masterID == repID)
+                {
+                    Thread.Sleep(3000);
+                    aliveRepCheck();
+                } else
+                {
+                    Thread.Sleep(1000);
+                    pingMaster();
+                }
+            }
+        }
+
+        private void pingMaster()
+        {
+                string masterAddress = myReplicaAddresses[masterID];
+
+                operatorServices = (OperatorServices)Activator.GetObject(
+                                    typeof(OperatorServices),
+                                    masterAddress);
+
+            Console.WriteLine("pinging master ---> " + masterAddress);
+
+                var task = Task.Run(() => operatorServices.updateRepPing(repID));
+
+                if (!task.Wait(TimeSpan.FromSeconds(PING_TIMEOUT)))
+                {
+                    masterID++;
+                    if (masterID == repFact) masterID = 0;
+                }
+        }
+
+        private void aliveRepCheck()
+        {
+            for (int i = 0; i < oldRepPings.Length; i++)
+            {
+                if (i == repID) continue;
+
+                if (oldRepPings[i] == newRepPings[i])
+                {
+                    operatorServices = (OperatorServices)Activator.GetObject(
+                                        typeof(OperatorServices),
+                                        myReplicaAddresses[i]);
+                    int result = -1;
+                    var task = Task.Run(() => result = operatorServices.ping(repID));
+                    if (!task.Wait(TimeSpan.FromSeconds(PING_TIMEOUT)))
+                    {
+                        if (_operator.updatedRep[i])
+                        {
+                            Console.WriteLine("NAO VOU PEDIR NADA ! da replica " + i);
+                        }
+                        else
+                        {
+                            Console.WriteLine("VOU PEDIR OS TUPLOS DA REPLICA ---> " + i);
+                            foreach (string upStreamAddress in previousAddresses)
+                            {
+                                operatorServices = (OperatorServices)Activator.GetObject(
+                                            typeof(OperatorServices),
+                                            upStreamAddress);
+
+                                Console.WriteLine("ISTO ESTORIA ---> replica: " + id + "-" + i + " upStreamAddress: " + upStreamAddress);
+
+                                List<ForwardTup> tuples = operatorServices.getDeadReplicaTuples(id + "-" + i);
+                                //List<ForwardTup> tuples = new List<ForwardTup>();
+                                foreach (ForwardTup tup in tuples)
+                                {
+                                    lock (inputTuples)
+                                    {
+                                        inputTuples.Add(tup);
+                                    }
+                                }
+
+                                _operator.updatedRep[i] = true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if(result < masterID) masterID = result;
+                    }
+                } else
+                {
+                        oldRepPings[i] = newRepPings[i];
+                }
+            }
+        }
+
         public void sendTuples()
         {
             Console.WriteLine("Send-Tuples Thread started");
+
+            Thread.Sleep(5000);
+
             while (true)
             {
                 if (_operator.freeze)
@@ -439,10 +558,10 @@ namespace DADStorm
                 }
                 if (_operator.outputTuples.Count != 0)
                 {
-                    string[] outputTuple;
+                    ForwardTup outputTuple;
                     lock (_operator.outputTuples)
                     {
-                        outputTuple = (string[])_operator.outputTuples[0].Clone();
+                        outputTuple = (ForwardTup)_operator.outputTuples[0].Clone();
                     }
 
                     lock (_operator.aliveReplicas) //antes era lock send addresses
@@ -469,15 +588,15 @@ namespace DADStorm
                                         switch (routingToThisReplica)
                                         {
                                             case "primary":
-                                                workReplica = _operator.getLowerReplica(id);
+                                                workReplica = _operator.getLowerReplica(operatorID);
                                                 break;
                                             case "random":
                                                 Random random = new Random();
                                                 workReplica = random.Next(0, limit);
-                                                workReplica = getCorrectAliveID(_operator.id, workReplica, limit);
+                                                workReplica = _operator.getCorrectAliveID(operatorID, workReplica, limit);
                                                 break;
                                             case "hashing":
-                                                workReplica = getHashValue(outputTuple, limit, fieldNumberHashing, _operator.id);
+                                                workReplica = _operator.getHashValue(outputTuple, limit, fieldNumberHashing, operatorID);
                                                 break;
                                         }
                                         string replicaID = operatorID + "-" + workReplica;
@@ -487,12 +606,21 @@ namespace DADStorm
                                             operatorServices = (OperatorServices)Activator.GetObject(
                                                                 typeof(OperatorServices),
                                                                 sendAddress);
-                                            Console.WriteLine("Sending to " + sendAddress + " the following tuple -> " + constructTuple(outputTuple));
+                                            Console.WriteLine("Sending to " + sendAddress + " the following tuple -> " + constructTuple(outputTuple.tup));
+
+                                            //remote call para fechar o tuplo !
+                                            //a remote call deve 'falhar' se tiver fechado, e esse tuplo é descartado
+                                            //em vez de ser enviado.
+                                            //quando um OPx pede tuplos de uma replica que falhou, o
+                                            //operador que manda deve fechar esses tuplos, e abrir o mesmo tuplo
+                                            //com a key do OPx a quem re-enviou
+
                                             var task = Task.Run(() => operatorServices.exchangeTuples(outputTuple));
                                             if (task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
                                             {
                                                 contador++; // Just to make an aux print in the Console
                                                 Console.WriteLine("Received Answer " + contador);
+                                                _operator.bitStorm.addForwardTup(outputTuple, replicaID);
                                             }
                                             else
                                             {
@@ -503,7 +631,7 @@ namespace DADStorm
                                             }
                                             if (_operator.loggingLevel.Equals("full"))
                                             {
-                                                new Thread(() => puppetMasterServices.addMessageToLog(constructMsgToLog(outputTuple))).Start();
+                                                new Thread(() => puppetMasterServices.addMessageToLog(constructMsgToLog(outputTuple.tup))).Start();
                                             }
                                         }
                                         catch (System.Net.Sockets.SocketException e) //Operator crashou
@@ -526,7 +654,7 @@ namespace DADStorm
                                 {
                                     string failedOperator = savedReplicaID.Split('-')[0];
                                     int failedReplicaID = Int32.Parse(savedReplicaID.Split('-')[1]);
-                                    aliveReplicas[failedOperator][failedReplicaID] = false;
+                                    _operator.aliveReplicas[failedOperator][failedReplicaID] = false;
                                 }
 
                                 if (_operator.semantics.Equals("at-most-once") ||
@@ -595,9 +723,9 @@ namespace DADStorm
             }
         }
 
-        private int getHashValue(string[] tuple, int limit, int fieldNumber, string operatorID)
+        private int getHashValue(ForwardTup tuple, int limit, int fieldNumber, string operatorID)
         {
-            string strToHash = tuple[fieldNumber - 1];
+            string strToHash = tuple.tup[fieldNumber - 1];
             int hashValue = strToHash.GetHashCode() % limit;
             //Console.WriteLine("HASH VALUE = " + hashValue);
             int replicaID = Math.Abs(hashValue);
@@ -607,11 +735,14 @@ namespace DADStorm
 
         private int getCorrectAliveID(string operatorID, int initialReplica, int limit)
         {
+            Console.WriteLine("OPERATOR ID -->> " + operatorID);
+            //Console.WriteLine("GETTING CORRECT ALIVE ID !!!! I HAVE ---> " + initialReplica);
             int countIterations = 0;
             int replicaID = initialReplica;
             //Console.WriteLine("initial replica = " + replicaID);
             while (!aliveReplicas[operatorID][replicaID])
             {
+                //Console.WriteLine("EU NUNCA ENTRO AQUIIIIIIIIIIIIIIIII :)");
                 replicaID++;
                 if (replicaID == limit)
                 {
@@ -623,6 +754,7 @@ namespace DADStorm
                     break;
                 }
             }
+            //Console.WriteLine("!!! IN THE END I GOT ---> " + replicaID);
             return replicaID;
         }
 
@@ -644,9 +776,9 @@ namespace DADStorm
             return tuple;
         }
 
-        public void exchangeTuples(string[] tuple)
+        public void exchangeTuples(ForwardTup tuple)
         {
-            Console.WriteLine("Received the following tuple -> " + constructTuple(tuple));
+            Console.WriteLine("Received the following tuple -> " + constructTuple(tuple.tup));
             lock(_operator.inputTuples){
                 _operator.inputTuples.Add(tuple);
             }
@@ -725,11 +857,11 @@ namespace DADStorm
             }
             lock (_operator.aliveReplicas)
             {
-                lock (_operator.routingTable)
-                {
-                    _operator.addToAliveReplicas(operatorID, repFact);
-                    _operator.addToRoutingTable(operatorID, routing);
-                }                
+                    lock (_operator.routingTable)
+                    {
+                        _operator.addToAliveReplicas_lockLess(operatorID, repFact);
+                        _operator.addToRoutingTable(operatorID, routing);
+                    }        
             }
         }
         
@@ -753,6 +885,26 @@ namespace DADStorm
             }
         }
 
+
+        private void addToAliveReplicas_lockLess(string replicaID, int repFact)
+        {
+            string operatorID = replicaID.Split('-')[0];
+            int rep = Int32.Parse(replicaID.Split('-')[1]);
+                if (aliveReplicas.ContainsKey(operatorID))
+                {
+                    aliveReplicas[operatorID][rep] = true;
+                }
+
+                else
+                {
+                    bool[] reps = new bool[repFact];
+                    reps[rep] = true;
+                    aliveReplicas.Add(operatorID, reps);
+                }
+        }
+
+
+
         private void addToRoutingTable(string replicaID, string routing)
         {
             string operatorID = replicaID.Split('-')[0];
@@ -760,6 +912,49 @@ namespace DADStorm
             {
                 routingTable.Add(operatorID, routing);
             }
+        }
+
+        public int ping(int m)
+        {
+            if (_operator.freeze)
+            {
+                _operator.eventPreventReturn.WaitOne();
+            }
+
+            if (m < _operator.masterID)
+            {
+                _operator.masterID = m;
+                return MAX_REPLICAS;
+            }
+            else
+            {
+                return masterID;
+            }
+        }
+
+        public void updateRepPing(int r)
+        {
+            if (_operator.freeze)
+            {
+                _operator.eventPreventReturn.WaitOne();
+            }
+
+            Console.WriteLine("A REPLICA " + r + "ACTUALIZOU O NEW_V E A updatedRep !" );
+
+            _operator.updatedRep[r] = false;
+            _operator.newRepPings[r]++;
+        }
+
+        public List<ForwardTup> getDeadReplicaTuples(string replicaID)
+        {
+            string[] s = replicaID.Split('-');
+            string op = s[0];
+            int rep = Int32.Parse(s[1]);
+            lock (aliveReplicas)
+            {
+                _operator.aliveReplicas[op][rep] = false;
+            }
+            return _operator.bitStorm.getAllOpenTups(replicaID);
         }
     }
 }

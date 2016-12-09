@@ -37,10 +37,10 @@ namespace DADStorm
                                 if (this.inputTuples.Count != 0)
                                 {
                                     checkSleeping();
-                                    string[] inputTuple;
+                                    ForwardTup inputTuple;
                                     lock (this.inputTuples)
                                     {
-                                        inputTuple = (string[])this.inputTuples[0].Clone();
+                                        inputTuple = (ForwardTup)this.inputTuples[0].Clone();
                                     }
                                     object[] args = new object[] { inputTuple };
                                     object resultObject = type.InvokeMember(this.methodCustom,
@@ -56,9 +56,10 @@ namespace DADStorm
                                         tuple.CopyTo(outputTuple, 0);
                                         Console.Write("tuple: ");
                                         Console.WriteLine(constructTuple(outputTuple));
+                                        ForwardTup oTup = new ForwardTup(outputTuple);
                                         lock (this.outputTuples)
                                         {
-                                            outputTuples.Add(outputTuple);
+                                            outputTuples.Add(oTup);
                                         }
                                     }
                                     lock (this.inputTuples)
